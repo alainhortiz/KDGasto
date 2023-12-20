@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>{% block title %}CONFIN{% endblock %}</title>
+    {% block stylesheets %}
+        <link href="{{ asset('easyadmin/plugins/font-awesome/css/font-awesome.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/plugins/simple-line-icons/simple-line-icons.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/plugins/uniform/css/uniform.default.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/tema/pages/css/lock2.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/global/css/components.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/global/css/plugins.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/tema/layout/css/layout.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/tema/layout/css/themes/darkblue.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/plugins/Alertify/css/alertify.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/plugins/Alertify/css/themes/default.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/global/css/estilos.css') }}" rel="stylesheet">
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/gescost_logo.png') }}"/>
+</head>
+<body class="login">
+{% block body %}
+    <div class="page-lock">
+        <div class="page-logo">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <a class="brand" href="#">
+                        <img style="width: 40%" src="{{ asset('images/gescost_logo_horizontal.png') }}" alt="logo"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="page-body">
+            <div class="page-lock-info" style="width: 450px">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <h1>{{ app.user.nombreCompleto }}</h1>
+                        <span class="locked"><strong>BLOQUEADO</strong></span>
+                        <h3>POR FAVOR CONTACTE CON EL ADMINISTRADOR </h3>
+                        <a href="{{ path('logout') }}" style="margin-top: 20px;margin-left: 25%" class="btn default btn-sm">
+                            ACEPTAR </a>
+                        <a href="{{ path('logout') }}" style="margin-top: 20px" class="btn default btn-sm">
+                            CANCELAR </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="page-footer-custom col-lg-offset-2  col-md-offset-3  col-sm-offset-3">
+                2020 &copy; CEDISAP.
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('easyadmin/global/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/jquery-migrate.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/jquery.blockui.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/uniform/jquery.uniform.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/jquery.cokie.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/backstretch/jquery.backstretch.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/metronic.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/layout/scripts/layout.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/layout/scripts/demo.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/pages/js/lock.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/Alertify/alertify.js') }}"></script>
+    <script>
+        jQuery(document).ready(function () {
+            Metronic.init(); // init metronic core components
+            Layout.init(); // init current layout
+            /*Lock.init();*/
+            Demo.init();
+            $.backstretch([
+                    "{{ asset('images/1.jpg') }}",
+                    "{{ asset('images/2.jpg') }}",
+                    "{{ asset('images/3.jpg') }}",
+                    "{{ asset('images/4.jpg') }}",
+                ], {
+                    fade: 1000,
+                    duration: 8000
+                }
+            );
+
+        });
+    </script>
+{% endblock %}
+</body>
+</html>
+
+
+
+
+
+

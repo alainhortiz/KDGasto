@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>{% block title %}CONFIN{% endblock %}</title>
+    {% block stylesheets %}
+        <link href="{{ asset('easyadmin/plugins/font-awesome/css/font-awesome.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/plugins/simple-line-icons/simple-line-icons.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/plugins/uniform/css/uniform.default.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/tema/pages/css/lock2.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/global/css/components.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/global/css/plugins.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/tema/layout/css/layout.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/tema/layout/css/themes/darkblue.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/plugins/Alertify/css/alertify.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/plugins/Alertify/css/themes/default.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/global/css/estilos.css') }}" rel="stylesheet">
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/gescost_logo.png') }}"/>
+</head>
+<body class="login">
+{% block body %}
+    <div class="page-lock" >
+        <div class="page-logo">
+            <a class="brand" href="#">
+                <img style="width: 40%" src="{{ asset('images/gescost_logo_horizontal.png') }}" alt="logo"/>
+            </a>
+        </div>
+        <div class="page-body">
+            <img class="page-lock-img" src="{{ asset('images/gescost_logo.png') }}" alt="">
+            <div class="page-lock-info">
+                <h1>{{ app.user.nombre ~' '~ app.user.primerApellido }}</h1>
+                <span class="locked">BLOQUEADO </span>
+                <form class="form-inline" action="#">
+                    <div class="input-group input-medium input-icon left">
+                        <input type="password" class="form-control" placeholder="Contraseña" id="password" name="password">
+                        <i style="color: #dc141b" class="fa fa-exclamation tooltips hidden password" data-placement="bottom" data-original-title="Teclee la contraseña" ></i>
+                        <span class="input-group-btn">
+					        <button id="submit" type="button" class="btn blue icn-only"><i class="m-icon-swapright m-icon-white"></i></button>
+					    </span>
+                    </div>
+                    <!-- /input-group -->
+                    <div class="relogin">
+                        <a href="{{ path('logout') }}">
+                            No eres {{ app.user.nombre ~' '~ app.user.primerApellido }} ? </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="page-footer-custom">
+            2020 &copy; CEDISAP.
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('easyadmin/global/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/jquery-migrate.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/jquery.blockui.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/uniform/jquery.uniform.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/jquery.cokie.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/backstretch/jquery.backstretch.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/metronic.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/layout/scripts/layout.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/layout/scripts/demo.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/pages/js/lock.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/Alertify/alertify.js') }}"></script>
+    <script>
+        jQuery(document).ready(function() {
+            Metronic.init(); // init metronic core components
+            Layout.init(); // init current layout
+            /*Lock.init();*/
+            Demo.init();
+            $.backstretch([
+                    "{{ asset('images/1.jpg')}}",
+                    "{{ asset('images/2.jpg')}}",
+                    "{{ asset('images/3.jpg')}}",
+                    "{{ asset('images/4.jpg')}}",
+                ], {
+                    fade: 1000,
+                    duration: 8000
+                }
+            );
+
+            $('#submit').on('click',function () {
+
+                var errores = 0;
+                $('input').each(function () {
+
+                    var name = $(this).prop('name');
+                    if($(this).val().trim() == ''){
+                        $(this).addClass('input-error');
+                        $('.'+name).removeClass('hidden');
+                        errores++;
+                    }else {
+                        $(this).removeClass('input-error');
+                        $('.'+name).addClass('hidden');
+                    }
+                });
+                if(errores !== 0) return false;
+
+
+                var mat_datos = {
+                    password: $("#password").val()
+                };
+                $.ajax({
+                    type: "POST",
+                    dataType: "html",
+                    url: '{{ path("confirmPassword") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    if(data == 'ok'){
+
+                        window.location.href = "{{ path('inicio') }}";
+
+                    }else{
+                        alertify.alert('<h4><strong>'+ data +'</strong></h4>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label','Aceptar')
+                    }
+                });
+
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>
+
+
+
+
+
+

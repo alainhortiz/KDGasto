@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>{% block title %}GESCOST{% endblock %}</title>
+    {% block stylesheets %}
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="{{ asset('easyadmin/plugins/font-awesome/css/font-awesome.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/plugins/simple-line-icons/simple-line-icons.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/plugins/uniform/css/uniform.default.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/plugins/bootstrap-switch/css/bootstrap-switch.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/tema/layout/css/themes/darkblue.css') }}" rel="stylesheet">
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN THEME STYLES -->
+        <link href="{{ asset('easyadmin/global/css/components.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/global/css/plugins.css') }}" rel="stylesheet">
+        <link href="{{ asset('easyadmin/tema/layout/css/layout.css') }}" rel="stylesheet">
+
+
+        <!-- END THEME STYLES -->
+        <link href="{{ asset('easyadmin/plugins/Alertify/css/alertify.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/plugins/Alertify/css/themes/default.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('easyadmin/global/css/estilos.css') }}" rel="stylesheet">
+    {% endblock %}
+    <link rel="icon" type="image/phg" sizes="32x32" href="{{ asset('images/favicon.png') }}"/>
+</head>
+<body class="page-header-fixed page-quick-sidebar-over-content page-full-width">
+{% block nav %}
+    <div class="page-header -i navbar navbar-fixed-top" style="color: #009490">
+        <!-- BEGIN HEADER INNER -->
+        <div class="page-header-inner">
+            <!-- BEGIN LOGO -->
+            <div class="page-logo" style="margin-left: 1%">
+                <a href="{{ app.session.get('comprobacion') == true ? path('inicio') : path('inicio2') }}">
+                    <img style="width: 250px" src="{{ asset('images/gescost_logo_horizontal.png') }}"
+                         alt="GesCost Logo"/>
+                </a>
+            </div>
+            <!-- END LOGO -->
+            <!-- BEGIN HORIZANTAL MENU -->
+            <!-- DOC: Apply "hor-menu-light" class after the "hor-menu" class below to have a horizontal menu with white background -->
+            <!-- DOC: This is desktop version of the horizontal menu. The mobile version is defined(duplicated) sidebar menu below. So the horizontal menu has 2 seperate versions -->
+            <div class="hor-menu hidden-sm hidden-xs" style="margin-left: 10%">
+                <ul class="nav navbar-nav">
+                    <!-- DOC: Remove data-hover="dropdown" and data-close-others="true" attributes below to disable the horizontal opening on mouse hover -->
+                    <li class="classic-menu-dropdown">
+                        {% if not (is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_ADMINISTRADOR")) %}
+                            <a data-toggle="dropdown" href="javascript:;" data-hover="megamenu-dropdown"
+                               data-close-others="true">
+                                PLAN ANUAL ESTIMADO <i class="fa fa-angle-down"></i>
+                            </a>
+                        {% endif %}
+                        <ul class="dropdown-menu pull-left">
+                            {% if is_granted("ROLE_DISTRIBUIDOR_PRINCIPAL") %}
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_INDICADORES' %}
+                                    <li>
+                                        <a href="{{ path('gestionarPlanesEstimados') }}">
+                                            <i class="fa fa-exchange"></i> PLAN ESTIMADO </a>
+                                    </li>
+                                {% endfor %}
+                            {% endif %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_VENTAS' %}
+                                <li class="dropdown-submenu">
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE VENTAS </a>
+                                    <ul class="dropdown-menu">
+                                        {% if (app.session.get('aprobarEstimadoVenta')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanVentasDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoVentaMes')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanVentasCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_RECURSOS_HUMANOS' %}
+                                <li class="dropdown-submenu">
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> RECURSOS HUMANOS </a>
+                                    <ul class="dropdown-menu">
+                                        {% if (app.session.get('aprobarEstimadoRecursosHumanos')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanFondosDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoFondoCentroCosto')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanFondosCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_ENERGIA' %}
+                                <li class="dropdown-submenu">
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE ENERGÍA </a>
+                                    <ul class="dropdown-menu">
+                                        {% if (app.session.get('aprobarEstimadoEnergia')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanEnergiasDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoEnergiaCentroCosto')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanEnergiasCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_OTROS_GASTOS' %}
+                                <li class="dropdown-submenu">
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE OTROS GASTOS </a>
+                                    <ul class="dropdown-menu">
+                                        {% if (app.session.get('aprobarEstimadoOtrosGastos')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanOtrosGastos') }}">
+                                                    <i class="fa fa-cog"></i> SERVICIOS </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoOtrosGastosDivision')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanOtrosGastosDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoOtrosGastosCentroCosto')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanOtrosGastosCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_MATERIAS_PRIMAS' %}
+                                <li class="dropdown-submenu">
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE MATERIAS PRIMAS </a>
+                                    <ul class="dropdown-menu">
+                                        {% if (app.session.get('aprobarEstimadoMateriaPrima')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanMateriasPrimasDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoMateriaPrimaDivision')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanMateriasPrimasCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_DEPRECIACION' %}
+                                <li class="dropdown-submenu">
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE DEPRECIACIÓN </a>
+                                    <ul class="dropdown-menu">
+                                        {% if (app.session.get('aprobarEstimadoDepreciacion')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanDepreciacionesDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoDepreciacionDivision')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanDepreciacionesCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_AMORTIZACION' %}
+                                <li class="dropdown-submenu">
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE AMORTIZACIÓN </a>
+                                    <ul class="dropdown-menu">
+                                        {% if (app.session.get('aprobarEstimadoAmortizacion')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanAmortizacionesDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoAmortizacionDivision')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanAmortizacionesCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% if (app.session.get('aprobarEstimadoCombustible')) %}
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_COMBUSTIBLE' %}
+                                    <li class="dropdown-submenu">
+                                        <a href="javascript:">
+                                            <i class="fa fa-automobile"></i> TRANSPORTE </a>
+                                        <ul class="dropdown-menu">
+                                            {% if (app.session.get('aprobarEstimadoCombustible')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                                <li>
+                                                    <a href="{{ path('gestionarEstimadoCombustiblesMediosTransportes') }}">
+                                                        <i class="fa fa-cog"></i> COMBUSTIBLE </a>
+                                                </li>
+                                                {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_LUBRICANTE' %}
+                                                    {% if (app.session.get('aprobarEstimadoLubricante')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                                        <li>
+                                                            <a href="{{ path('gestionarEstimadoLubricantesMediosTransportes') }}">
+                                                                <i class="fa fa-cog"></i> ACEITE </a>
+                                                        </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% if is_granted("ROLE_ADMINISTRADOR") or is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_NOMENCLADOR") %}
+                        <li class="classic-menu-dropdown">
+                            <a data-toggle="dropdown" href="javascript:;" data-hover="megamenu-dropdown"
+                               data-close-others="true">
+                                NOMENCLADORES <i class="fa fa-angle-down"></i>
+                            </a>
+                            <ul class="dropdown-menu pull-left">
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'PLANTILLA_CARGOS' %}
+                                    <li class="dropdown-submenu">
+                                        <a href="javascript:">
+                                            <i class="fa fa-building"></i> RECURSOS HUMANOS </a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="{{ path('gestionarPromedioTrabajadores') }}">
+                                                    <i class="fa fa-cog"></i> PROMEDIO DE TRABAJADORES </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarDenominadorCargos') }}">
+                                                    <i class="fa fa-cog"></i> DENOMINADOR DE CARGOS </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarTiposPlantillas') }}">
+                                                    <i class="fa fa-cog"></i> TIPO DE PLANTILLA DE CARGOS </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarPlantillaCargos') }}">
+                                                    <i class="fa fa-cog"></i> PLANTILLA DE CARGOS </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'PLANTILLA_TRANSPORTE' %}
+                                    <li class="dropdown-submenu">
+                                        <a href="javascript:">
+                                            <i class="fa fa-automobile"></i> TRANSPORTE </a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="{{ path('gestionarTiposTransportes') }}">
+                                                    <i class="fa fa-folder-open"></i> TIPOS DE TRANSPORTES</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarModelosTransportes') }}">
+                                                    <i class="fa fa-folder-open"></i> MODELOS DE TRANSPORTES</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarTiposCombustibles') }}">
+                                                    <i class="fa fa-folder-open"></i> TIPOS DE COMBUSTIBLES</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarLubricantes') }}">
+                                                    <i class="fa fa-folder-open"></i> ACEITES Y LUBRICANTES</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarTransportes') }}">
+                                                    <i class="fa fa-folder-open"></i> PLANTILLA TRANSPORTES</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'PRECIO_ENERGIA' %}
+                                    <li>
+                                        <a href="{{ path('gestionarEnergias') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR UNIDAD DE ENERGÍA
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'ADMINISTRACION' %}
+                                    <li>
+                                        <a href="{{ path('gestionarDivisionCentrosCostos') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR DIVISIONES</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('gestionarCentrosCostos') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR CENTROS DE COSTOS</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('gestionarMateriasPrimas') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR MATERIAS PRIMAS Y MATERIALES</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('gestionarDepreciaciones') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR DEPRECIACIÓN
+                                            Y AMORTIZACIÓN
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('gestionarOtrosGastos') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR OTROS GASTOS MONETARIOS
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% for nivel in app.user.nivelAccesos() if nivel == 'ADMINISTRACION' %}
+                            <li class="classic-menu-dropdown">
+                                <a data-toggle="dropdown" href="javascript:;" data-hover="megamenu-dropdown"
+                                   data-close-others="true">
+                                    ADMINISTRACIÓN <i class="fa fa-angle-down"></i>
+                                </a>
+                                <ul class="dropdown-menu pull-left">
+                                    <li>
+                                        <a href="{{ path('gestionarUsuarios') }}">
+                                            <i class="fa fa-users"></i> GESTIONAR USUARIOS </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('trazas') }}">
+                                            <i class="fa fa-eye"></i> TRAZAS</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                    <li class="classic-menu-dropdown">
+                        <a href="{{ asset('ayuda/index.html') }}" target="_blank">
+                            AYUDA <i class="icon icon-question"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- END HORIZANTAL MENU -->
+            <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+            <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse"
+               data-target=".navbar-collapse">
+            </a>
+            <!-- END RESPONSIVE MENU TOGGLER -->
+            <!-- BEGIN TOP NAVIGATION MENU -->
+            <div class="top-menu">
+                <ul class="nav navbar-nav pull-right">
+                    <li class="dropdown dropdown-user">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
+                           data-close-others="true">
+                            <span class="username username-hide-on-mobile">Bienvenido: {{ app.user.nombreCompleto() }}</span>
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-default">
+                            <li>
+                                <a href="{{ path('passwordForm') }}">
+                                    <i class="icon-key"></i>Cambiar Contraseña</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- END USER LOGIN DROPDOWN -->
+                    <!-- BEGIN QUICK SIDEBAR TOGGLER -->
+                    <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                    <li class="dropdown dropdown-quick-sidebar-toggler">
+                        <a href="{{ path('logout') }}" class="dropdown-toggle">
+                            <i class="icon-logout"></i>
+                        </a>
+                    </li>
+                    <!-- END QUICK SIDEBAR TOGGLER -->
+                </ul>
+            </div>
+            <!-- END TOP NAVIGATION MENU -->
+        </div>
+        <!-- END HEADER INNER -->
+    </div>
+    <div class="clearfix">
+    </div>
+{% endblock %}
+
+<!-- BEGIN CONTENT -->
+<div class="page-container">
+    {% block responsiveNav %}
+        <!-- BEGIN SIDEBAR -->
+        <div class="page-sidebar-wrapper">
+            <!-- BEGIN HORIZONTAL RESPONSIVE MENU -->
+            <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+            <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+            <div class="page-sidebar navbar-collapse collapse">
+                <ul class="page-sidebar-menu" data-slide-speed="200" data-auto-scroll="true">
+                    <li>
+                        {% if not (is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_ADMINISTRADOR")) %}
+                            <a>
+                                PLAN ANUAL ESTIMADO <i class="fa fa-angle-down"></i>
+                            </a>
+                        {% endif %}
+                        <ul class="sub-menu">
+                            {% if is_granted("ROLE_DISTRIBUIDOR_PRINCIPAL") %}
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_INDICADORES' %}
+                                    <li>
+                                        <a href="{{ path('gestionarPlanesEstimados') }}">
+                                            <i class="fa fa-exchange"></i> PLAN ESTIMADO </a>
+                                    </li>
+                                {% endfor %}
+                            {% endif %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_VENTAS' %}
+                                <li>
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE VENTAS <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        {% if (app.session.get('aprobarEstimadoVenta')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanVentasDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoVentaMes')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanVentasCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_RECURSOS_HUMANOS' %}
+                                <li>
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> RECURSOS HUMANOS <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        {% if (app.session.get('aprobarEstimadoFondo')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanFondosDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoFondoCentroCosto')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanFondosCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_ENERGIA' %}
+                                <li>
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE ENERGÍA <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        {% if (app.session.get('aprobarEstimadoEnergia')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanEnergiasDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoEnergiaCentroCosto')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanEnergiasCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_OTROS_GASTOS' %}
+                                <li>
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE OTROS GASTOS <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        {% if (app.session.get('aprobarEstimadoOtrosGastos')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanOtrosGastos') }}">
+                                                    <i class="fa fa-cog"></i> SERVICIOS </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoOtrosGastosDivision')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanOtrosGastosDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoOtrosGastosCentroCosto')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanOtrosGastosCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_MATERIAS_PRIMAS' %}
+                                <li>
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE MATERIAS PRIMAS <span
+                                                class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        {% if (app.session.get('aprobarEstimadoMateriaPrima')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanMateriasPrimasDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoMateriaPrimaDivision')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanMateriasPrimasCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_DEPRECIACION' %}
+                                <li>
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE DEPRECIACIÓN <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        {% if (app.session.get('aprobarEstimadoDepreciacion')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanDepreciacionesDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoDepreciacionDivision')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanDepreciacionesCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_AMORTIZACION' %}
+                                <li>
+                                    <a href="javascript:">
+                                        <i class="fa fa-building"></i> PLAN DE AMORTIZACIÓN <span class="arrow"></span>
+                                    </a>
+                                    <ul class="sub-menu">
+                                        {% if (app.session.get('aprobarEstimadoAmortizacion')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanAmortizacionesDivision') }}">
+                                                    <i class="fa fa-cog"></i> DIVISIÓN </a>
+                                            </li>
+                                        {% endif %}
+                                        {% if (app.session.get('aprobarEstimadoAmortizacionDivision')) and is_granted("ROLE_DISTRIBUIDOR_CENTRO") %}
+                                            <li>
+                                                <a href="{{ path('gestionarEstimadoPlanAmortizacionesCentroCosto') }}">
+                                                    <i class="fa fa-cog"></i> CENTRO DE COSTO </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            {% if app.session.get('aprobarEstimadoCombustible') %}
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_COMBUSTIBLE' %}
+                                    <li>
+                                        <a href="javascript:">
+                                            <i class="fa fa-automobile"></i> TRANSPORTE <span class="arrow"></span>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            {% if (app.session.get('aprobarEstimadoCombustible')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                                <li>
+                                                    <a href="{{ path('gestionarEstimadoCombustiblesMediosTransportes') }}">
+                                                        <i class="fa fa-cog"></i> COMBUSTIBLE </a>
+                                                </li>
+                                                {% for nivel in app.user.nivelAccesos() if nivel == 'ESTIMADO_LUBRICANTE' %}
+                                                    {% if (app.session.get('aprobarEstimadoLubricante')) and is_granted("ROLE_DISTRIBUIDOR_DIVISION") %}
+                                                        <li>
+                                                            <a href="{{ path('gestionarEstimadoLubricantesMediosTransportes') }}">
+                                                                <i class="fa fa-cog"></i> ACEITE </a>
+                                                        </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% if is_granted("ROLE_ADMINISTRADOR") or is_granted("ROLE_SUPERUSUARIO") or is_granted("ROLE_NOMENCLADOR") %}
+                        <li>
+                            <a>
+                                NOMENCLADORES <i class="fa fa-angle-down"></i>
+                            </a>
+
+                            <ul class="sub-menu">
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'PLANTILLA_CARGOS' %}
+                                    <li>
+                                        <a href="javascript:">
+                                            <i class="fa fa-building"></i> RECURSOS HUMANOS <span
+                                                    class="arrow"></span>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="{{ path('gestionarPromedioTrabajadores') }}">
+                                                    <i class="fa fa-cog"></i> PROMEDIO DE TRABAJADORES </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarDenominadorCargos') }}">
+                                                    <i class="fa fa-cog"></i> DENOMINADOR DE CARGOS </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarTiposPlantillas') }}">
+                                                    <i class="fa fa-cog"></i> TIPO DE PLANTILLA DE CARGOS </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarPlantillaCargos') }}">
+                                                    <i class="fa fa-cog"></i> PLANTILLA DE CARGOS </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'PLANTILLA_TRANSPORTE' %}
+                                    <li>
+                                        <a href="javascript:">
+                                            <i class="fa fa-automobile"></i> TRANSPORTE <span
+                                                    class="arrow"></span>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="{{ path('gestionarTiposTransportes') }}">
+                                                    <i class="fa fa-folder-open"></i> TIPOS DE TRANSPORTES</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarModelosTransportes') }}">
+                                                    <i class="fa fa-folder-open"></i> MODELOS DE TRANSPORTES</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarTiposCombustibles') }}">
+                                                    <i class="fa fa-folder-open"></i> TIPOS DE COMBUSTIBLES</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarLubricantes') }}">
+                                                    <i class="fa fa-folder-open"></i> ACEITES Y LUBRICANTES</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('gestionarTransportes') }}">
+                                                    <i class="fa fa-folder-open"></i> PLANTILLA TRANSPORTES</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'PRECIO_ENERGIA' %}
+                                    <li>
+                                        <a href="{{ path('gestionarEnergias') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR UNIDAD DE ENERGÍA
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                                {% for nivel in app.user.nivelAccesos() if nivel == 'ADMINISTRACION' %}
+                                    <li>
+                                        <a href="{{ path('gestionarDivisionCentrosCostos') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR DIVISIONES</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('gestionarCentrosCostos') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR CENTROS DE COSTOS</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('gestionarMateriasPrimas') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR MATERIAS PRIMAS Y MATERIALES</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('gestionarDepreciaciones') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR DEPRECIACIÓN
+                                            Y AMORTIZACIÓN
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('gestionarOtrosGastos') }}">
+                                            <i class="fa fa-folder-open"></i> GESTIONAR OTROS GASTOS MONETARIOS
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% for nivel in app.user.nivelAccesos() if nivel == 'ADMINISTRACION' %}
+                            <li>
+                                <a>
+                                    ADMINISTRACION <i class="fa fa-angle-down"></i>
+                                </a>
+                                <ul class="sub-menu">
+                                    <li>
+                                        <a href="{{ path('gestionarUsuarios') }}">
+                                            <i class="fa fa-users"></i> GESTIONAR USUARIOS </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('trazas') }}">
+                                            <i class="fa fa-eye"></i> TRAZAS</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                    <li>
+                        <a href="{{ asset('ayuda/index.html') }}" target="_blank">
+                            AYUDA <i class="icon icon-question"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- END HORIZONTAL RESPONSIVE MENU -->
+        <!-- END SIDEBAR -->
+    {% endblock %}
+    <div class="page-content-wrapper">
+        <div class="page-content" style="margin-top: -20px">
+            {% block info %}{% endblock %}
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+<!-- END CONTENT -->
+
+{% block footer %}
+    <!-- BEGIN FOOTER -->
+    <div class="page-footer">
+        <div class="page-footer-inner col-lg-offset-5  col-md-offset-3  col-sm-offset-3">
+            <strong>SISTEMA INTEGRAL PARA LA GESTIÓN DE COSTOS DE LOS CENTROS Y SERVICIOS DE ECODIC</strong>
+            <br>Copyright 2020 &copy; Todos los derechos reservados
+        </div>
+        <div class="scroll-to-top">
+            <i class="icon-arrow-up"></i>
+        </div>
+    </div>
+    <!-- END FOOTER -->
+{% endblock %}
+{% block javascripts %}
+    <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+    <!-- BEGIN CORE PLUGINS -->
+    <script src="{{ asset('easyadmin/global/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/jquery-migrate.min.js') }}"></script>
+    <!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+    <script src="{{ asset('easyadmin/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/jquery.blockui.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/jquery.cokie.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/uniform/jquery.uniform.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
+    <!-- END CORE PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="{{ asset('easyadmin/global/js/metronic.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/layout/scripts/layout.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/layout/scripts/quick-sidebar.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/layout/scripts/demo.js') }}"></script>
+    <script src="{{ asset('easyadmin/inicio/index.js') }}"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script src="{{ asset('easyadmin/plugins/Alertify/alertify.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/moment.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/formatoTipos.js') }}"></script>
+    <script src="{{ asset('easyadmin/global/js/functionsAll.js') }}"></script>
+    <script>
+        alertify.confirm()
+            .setting({
+                'defaultFocus': 'cancel',
+                'labels': {ok: 'Aceptar', cancel: 'Cancelar'},
+                'modal': true
+            }).setHeader('<span class="glyphicon glyphicon-alert" style="font-size: 20px"></span>' +
+            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>');
+        $('[data-toggle="tooltip"]').tooltip();
+        $(document).ready(function () {
+            Metronic.init(); // init metronic core componets
+            Layout.init(); // init layout
+            QuickSidebar.init(); // init quick sidebar
+            Demo.init(); // init demo features
+            Index.init();
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

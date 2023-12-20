@@ -1,0 +1,153 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
+
+/**
+ * PlanEstimadoCentroCosto
+ *
+ * @ORM\Table(name="plan_estimado_centro_costo",uniqueConstraints={@UniqueConstraint(name="IDX__UNIQUETUPLA02", columns={"centro_costo_id", "plan_estimado_indicadores_id"})})
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PlanEstimadoCentroCostoRepository")
+ */
+class PlanEstimadoCentroCosto
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="totalVentaCentroCosto", type="integer",nullable=true)
+     */
+    private $totalVentaCentroCosto = 0;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="CentroCosto",inversedBy="planEstimadoCentrosCostos")
+     */
+    protected $centroCosto;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="PlanEstimadoIndicadores",inversedBy="planEstimadoCentrosCostos")
+     */
+    protected $planEstimadoIndicadores;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="DivisionCentroCosto",inversedBy="planEstimadoCentrosCostos")
+     */
+    protected $divisionCentroCosto;
+
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set totalVentaCentroCosto
+     *
+     * @param integer $totalVentaCentroCosto
+     *
+     * @return PlanEstimadoCentroCosto
+     */
+    public function setTotalVentaCentroCosto($totalVentaCentroCosto)
+    {
+        $this->totalVentaCentroCosto = $totalVentaCentroCosto;
+
+        return $this;
+    }
+
+    /**
+     * Get totalVentaCentroCosto
+     *
+     * @return integer
+     */
+    public function getTotalVentaCentroCosto()
+    {
+        return $this->totalVentaCentroCosto;
+    }
+
+    /**
+     * Set centroCosto
+     *
+     * @param CentroCosto $centroCosto
+     *
+     * @return PlanEstimadoCentroCosto
+     */
+    public function setCentroCosto(CentroCosto $centroCosto = null)
+    {
+        $this->centroCosto = $centroCosto;
+
+        return $this;
+    }
+
+    /**
+     * Get centroCosto
+     *
+     * @return CentroCosto
+     */
+    public function getCentroCosto()
+    {
+        return $this->centroCosto;
+    }
+
+    /**
+     * Set planEstimadoIndicadores
+     *
+     * @param PlanEstimadoIndicadores $planEstimadoIndicadores
+     *
+     * @return PlanEstimadoCentroCosto
+     */
+    public function setPlanEstimadoIndicadores(PlanEstimadoIndicadores $planEstimadoIndicadores = null)
+    {
+        $this->planEstimadoIndicadores = $planEstimadoIndicadores;
+
+        return $this;
+    }
+
+    /**
+     * Get planEstimadoIndicadores
+     *
+     * @return PlanEstimadoIndicadores
+     */
+    public function getPlanEstimadoIndicadores()
+    {
+        return $this->planEstimadoIndicadores;
+    }
+
+    /**
+     * Set divisionCentroCosto
+     *
+     * @param DivisionCentroCosto $divisionCentroCosto
+     *
+     * @return PlanEstimadoCentroCosto
+     */
+    public function setDivisionCentroCosto(DivisionCentroCosto $divisionCentroCosto = null)
+    {
+        $this->divisionCentroCosto = $divisionCentroCosto;
+
+        return $this;
+    }
+
+    /**
+     * Get divisionCentroCosto
+     *
+     * @return DivisionCentroCosto
+     */
+    public function getDivisionCentroCosto()
+    {
+        return $this->divisionCentroCosto;
+    }
+}

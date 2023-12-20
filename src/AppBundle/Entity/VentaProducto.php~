@@ -1,0 +1,246 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * VentaProducto
+ *
+ * @ORM\Table(name="venta_producto")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\VentaProductoRepository")
+ */
+class VentaProducto
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="precioTotalCosto", type="decimal", precision=18, scale=2, nullable=false)
+     */
+    private $precioTotalCosto = 0;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="precioTotalVenta", type="decimal", precision=18, scale=2, nullable=false)
+     */
+    private $precioTotalVenta = 0;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="isPagado", type="boolean")
+     */
+    private $isPagado = false;
+
+    /**
+     * @var DateTime
+     *
+     * @ORM\Column(name="fechaPago", type="date", nullable=true)
+     */
+    private $fechaPago;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Usuario",inversedBy="ventasProductos")
+     */
+    protected $usuario;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="ModalidadPago",inversedBy="ventasProductos")
+     */
+    protected $modalidad;
+
+    /**
+     * @ORM\OneToMany(targetEntity="FichaCosto", mappedBy="ventaProducto")
+     */
+    private $fichasCostos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ProductoModalidadPago", mappedBy="ventaProducto")
+     */
+    private $modalidadesPagos;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->fichasCostos = new ArrayCollection();
+        $this->modalidadesPagos = new ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set precioTotalCosto
+     *
+     * @param string $precioTotalCosto
+     *
+     * @return VentaProducto
+     */
+    public function setPrecioTotalCosto($precioTotalCosto)
+    {
+        $this->precioTotalCosto = $precioTotalCosto;
+
+        return $this;
+    }
+
+    /**
+     * Get precioTotalCosto
+     *
+     * @return string
+     */
+    public function getPrecioTotalCosto()
+    {
+        return $this->precioTotalCosto;
+    }
+
+    /**
+     * Set precioTotalVenta
+     *
+     * @param string $precioTotalVenta
+     *
+     * @return VentaProducto
+     */
+    public function setPrecioTotalVenta($precioTotalVenta)
+    {
+        $this->precioTotalVenta = $precioTotalVenta;
+
+        return $this;
+    }
+
+    /**
+     * Get precioTotalVenta
+     *
+     * @return string
+     */
+    public function getPrecioTotalVenta()
+    {
+        return $this->precioTotalVenta;
+    }
+
+    /**
+     * Set isPagado
+     *
+     * @param boolean $isPagado
+     *
+     * @return VentaProducto
+     */
+    public function setIsPagado($isPagado)
+    {
+        $this->isPagado = $isPagado;
+
+        return $this;
+    }
+
+    /**
+     * Get isPagado
+     *
+     * @return boolean
+     */
+    public function getIsPagado()
+    {
+        return $this->isPagado;
+    }
+
+    /**
+     * Set fechaPago
+     *
+     * @param \DateTime $fechaPago
+     *
+     * @return VentaProducto
+     */
+    public function setFechaPago($fechaPago)
+    {
+        $this->fechaPago = $fechaPago;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaPago
+     *
+     * @return \DateTime
+     */
+    public function getFechaPago()
+    {
+        return $this->fechaPago;
+    }
+
+    /**
+     * Set usuario
+     *
+     * @param \AppBundle\Entity\Usuario $usuario
+     *
+     * @return VentaProducto
+     */
+    public function setUsuario(\AppBundle\Entity\Usuario $usuario = null)
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \AppBundle\Entity\Usuario
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
+    }
+
+    /**
+     * Add fichasCosto
+     *
+     * @param \AppBundle\Entity\FichaCosto $fichasCosto
+     *
+     * @return VentaProducto
+     */
+    public function addFichasCosto(\AppBundle\Entity\FichaCosto $fichasCosto)
+    {
+        $this->fichasCostos[] = $fichasCosto;
+
+        return $this;
+    }
+
+    /**
+     * Remove fichasCosto
+     *
+     * @param \AppBundle\Entity\FichaCosto $fichasCosto
+     */
+    public function removeFichasCosto(\AppBundle\Entity\FichaCosto $fichasCosto)
+    {
+        $this->fichasCostos->removeElement($fichasCosto);
+    }
+
+    /**
+     * Get fichasCostos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFichasCostos()
+    {
+        return $this->fichasCostos;
+    }
+}

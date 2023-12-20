@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="portlet light estilosForm">
+            <div class="portlet-title">
+                <div class="caption font-green">
+                    <i class="icon-note font-green"></i>
+                    <span class="caption-subject bold uppercase">TRAZAS</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div style="padding-top: 10px">
+                    <div class="portlet box grey-cascade">
+                        <div class="portlet-title" style="background-color: #2b3643">
+                            <div class="caption">
+                                <i class="fa fa-table"></i>
+                            </div>
+                            <div class="tools">
+                                <a href="javascript:;" class="collapse"></a>
+                            </div>
+                        </div>
+                        <div class="portlet-body" style="background-color: #afbac0">
+                            <table class="display" cellpadding="0" style="width: 100%" id="dataTraza">
+                                <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Usuario</th>
+                                    <th>Nombre</th>
+                                    <th>Operación</th>
+                                    <th>Descripción</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th>
+                                        <div class="input-group">
+                                <span class="input-group-addon ">
+                                    <i class="glyphicon glyphicon-search" style="font-size: 15px"></i>
+                                </span>
+                                            <input id="buscador_fecha" type="text" class="form-control" name="buscador_fecha" placeholder="Buscar por Fecha"  />
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="input-group">
+                                <span class="input-group-addon ">
+                                    <i class="glyphicon glyphicon-search" style="font-size: 15px"></i>
+                                </span>
+                                            <input id="buscador_username" type="text" class="form-control" name="buscador_username" placeholder="Buscar por Usuario"  />
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="input-group">
+                                <span class="input-group-addon ">
+                                    <i class="glyphicon glyphicon-search" style="font-size: 15px"></i>
+                                </span>
+                                            <input id="buscador_nombre" type="text" class="form-control " name="buscador_nombre" placeholder="Buscar por Nombre"  />
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="input-group">
+                                <span class="input-group-addon ">
+                                    <i class="glyphicon glyphicon-search" style="font-size: 15px"></i>
+                                </span>
+                                            <input id="buscador_operacion" type="text" class="form-control " name="buscador_operacion" placeholder="Buscar por Operación"  />
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="input-group">
+                                <span class="input-group-addon ">
+                                    <i class="glyphicon glyphicon-search" style="font-size: 15px"></i>
+                                </span>
+                                            <input id="buscador_descripcion" type="text" class="form-control " name="buscador_descripcion" placeholder="Buscar por Descripción"  />
+                                        </div>
+                                    </th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        #dataTraza tfoot input{
+            width: 100% !important;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- BEGIN GRAFICOS HIGHSTOCK LEVEL PLUGINS -->
+    <script src="{{ asset('easyadmin/plugins/highstock/code/highstock.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/highstock/code/modules/annotations.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/highstock/code/modules/exporting.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/highstock/code/modules/export-data.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/highstock/code/modules/export-clientside.js') }}"></script>
+    <!-- END  GRAFICOS HIGHSTOCK LEVEL PLUGINS -->
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <script>
+        jQuery(document).ready(function() {
+
+            (function(){
+                {% if not (is_granted("ROLE_ADMINISTRADOR") or is_granted("ROLE_SUPERUSUARIO")) %}
+                window.location.href = "{{ path('login') }}";
+                {% else %}
+                {% for nivel in app.user.nivelAccesos() if nivel == 'ADMINISTRACION' %}
+                {% else %}
+                window.location.href = "{{ path('login') }}";
+                {% endfor %}
+                {% endif %}
+            })();
+
+            var table = $('#dataTraza').DataTable({
+                dom: 'B<"float-left"i><"float-right"f>t<"float-left"l><"float-right"p><"clearfix">',
+                responsive: false,
+                order: [[ 0, "desc" ]],
+                processing: true,
+                serverSide: true,
+                ajax: "dataTableTrazasAjax",
+                columnDefs: [
+                    { "name": "fecha", "targets": 0 },
+                    { "name": "username", "targets": 1 },
+                    { "name": "nombre", "targets": 2 },
+                    { "name": "operacion", "targets": 3 },
+                    { "name": "descripcion", "targets": 4 },
+                ],
+                "initComplete": function () {
+                    this.api().columns().every( function () {
+                        var that = this;
+
+                        $( 'input', this.footer() ).on( 'keyup change', function () {
+                            if ( that.search() !== this.value ) {
+                                that
+                                    .search( this.value )
+                                    .draw();
+                            }
+                        });
+                    })
+                },
+                searchDelay: 1000
+            });
+
+        });
+    </script>
+{% endblock %}

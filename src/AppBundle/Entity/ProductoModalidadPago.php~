@@ -1,0 +1,51 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * ProductoModalidadPago
+ *
+ * @ORM\Table(name="producto_modalidad_pago")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductoModalidadPagoRepository")
+ */
+class ProductoModalidadPago
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="importePagado", type="decimal", precision=18, scale=2, nullable=false)
+     */
+    private $importePagado = 0;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="VentaProducto",inversedBy="modalidadesPagos")
+     */
+    protected $ventaProducto;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Usuario",inversedBy="modalidadesPagos")
+     */
+    protected $usuario;
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}
+

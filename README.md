@@ -1,0 +1,1 @@
+# Aplicación que controla las ventas, los servicios y los gastos de productos

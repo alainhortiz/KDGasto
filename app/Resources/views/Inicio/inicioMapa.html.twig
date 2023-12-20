@@ -1,0 +1,832 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('easyadmin/plantilla1/css/GraficosStyle.css') }}" rel="stylesheet">
+    <link href="{{ asset('easyadmin/tema/layout/css/themes/darkblue.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('easyadmin/plugins/bootstrap-datepicker/css/datepicker3.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block info %}
+    <div class="row counters">
+        <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" id="linkVenta" style="cursor: pointer">
+            {% if app.session.get('aprobarEstimadoVenta') %}
+                <div class="dashboard-stat grey-gallery">
+                {% else %}
+                <div class="dashboard-stat  {{ app.session.get('totalEstimadoVenta') == 0 ? 'grey' : 'grey-crusta' }}">
+                {% endif %}
+                <div class="visual">
+                    <i class="fa fa-building"></i>
+                </div>
+                <div class="details">
+                    <div class="number" data-toggle="counter-up" id="nameVentas">
+                        {{ app.session.get('totalEstimadoVenta')|number_format(0, '.', ',') }}
+                    </div>
+                    <div class="desc">
+                        <strong>VENTAS</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" id="linkSalario" style="cursor: pointer">
+            {% if app.session.get('aprobarEstimadoOtrosGastos') %}
+               <div class="dashboard-stat yellow-gallery">
+            {% else %}
+             <div class="dashboard-stat  {{ app.session.get('totalEstimadoRecursosHumanos') == 0 ? 'grey' : 'yellow-crusta' }}">
+            {% endif %}
+                <div class="visual">
+                    <i class="fa fa-bank"></i>
+                </div>
+                <div class="details">
+                    <div class="number" data-toggle="counter-up" id="nameRecursosHumanos">
+                        {{ app.session.get('totalEstimadoRecursosHumanos')|number_format(0, '.', ',') }}
+                    </div>
+                    <div class="desc">
+                        <strong>SALARIO</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" id="linkOtroGastos" style="cursor: pointer">
+            <div class="dashboard-stat  {{ app.session.get('totalEstimadoOtrosGastos') == 0 ? 'grey' : 'grey-gallery' }}">
+                <div class="visual">
+                    <i class="fa fa-archive"></i>
+                </div>
+                <div class="details">
+                    <div class="number" data-toggle="counter-up" id="nameOtrosGastos">
+                        {{ app.session.get('totalEstimadoOtrosGastos')|number_format(0, '.', ',') }}
+                    </div>
+                    <div class="desc">
+                        <strong>OTROS GASTOS</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" id="linkMateriasPrimas" style="cursor: pointer">
+            <div class="dashboard-stat  {{ app.session.get('totalEstimadoOtrosGastos') == 0 ? 'grey' : 'grey-gallery' }}">
+                <div class="visual">
+                    <i class="fa fa-archive"></i>
+                </div>
+                <div class="details">
+                    <div class="number" data-toggle="counter-up" id="nameMateriasPrimas">
+                        {{ app.session.get('totalEstimadoOtrosGastos')|number_format(0, '.', ',') }}
+                    </div>
+                    <div class="desc">
+                        <strong>MATERIAS PRIMAS</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" id="linkCombustible" style="cursor: pointer">
+            <div class="dashboard-stat  {{ app.session.get('totalEstimadoCombustible') == 0 ? 'grey' : 'grey-gallery' }}">
+                <div class="visual">
+                    <i class="fa fa-archive"></i>
+                </div>
+                <div class="details">
+                    <div class="number" id="nameCombustible">
+                        {{ app.session.get('totalEstimadoCombustible')|number_format(2, '.', ',') }}
+                    </div>
+                    <div class="desc">
+                        <strong>COMBUSTIBLE</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12" id="linkEnergia" style="cursor: pointer">
+            <div class="dashboard-stat  {{ app.session.get('totalEstimadoOtrosGastos') == 0 ? 'grey' : 'grey-gallery' }}">
+                <div class="visual">
+                    <i class="fa fa-archive"></i>
+                </div>
+                <div class="details">
+                    <div class="number" data-toggle="counter-up" id="nameEnergia">
+                        {{ app.session.get('totalEstimadoOtrosGastos')|number_format(0, '.', ',') }}
+                    </div>
+                    <div class="desc">
+                        <strong>ENERGÍA</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block body %}
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <!-- BEGIN ROW -->
+    <div class="row" id="dashboardInicio">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <!-- BEGIN CHART PORTLET-->
+            <div class="portlet light bordered sombreado">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span id="nameSeccion" class="caption-subject bold uppercase font-green-haze"> PLAN ESTIMADO DE INDICADORES PRINCIPALES </span>
+                        <span id="nameSeccionHelp" class="caption-helper bold uppercase"
+                              id="year">{{ app.session.get('yearActivo') }}</span>
+                    </div>
+                    <div class="caption font-green" style="float: right">
+                        <a href="{{ path('exportarPlanEstimadoDivision') }}"
+                           class="fa fa-file-excel-o fa-2x font-green"
+                           data-toggle="tooltip" data-placement="left" title="Exportar a Excel"></a>
+                    </div>
+                    <div class="tools">
+                        <a href="#" class="reload hidden" id="btnAtrasInicio" data-placement="top"
+                           data-original-title="Reiniciar">
+                        </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div id="graficoPrincipal" class="chart" style="height: 500px"></div>
+                    <div id="containerResultado"></div>
+                </div>
+            </div>
+            <!-- END CHART PORTLET-->
+        </div>
+    </div>
+    <div id="dashboardVentas" style="display:none">
+        <div class="row" style="margin-top: 40px">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <!-- BEGIN CHART PORTLET-->
+                <div class="portlet light bordered sombreado">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <span id="nameDivisionVenta" class="caption-subject bold uppercase font-green-haze"> DISTRIBUCIÓN POR DIVISIONES</span>
+                        </div>
+                        <div class="tools">
+                        <a href="{{ path('exportarPlanEstimadoDivisionVenta') }}"
+                           class="fa fa-file-excel-o fa-2x font-green"
+                           data-toggle="tooltip" data-placement="left" title="Exportar a Excel"></a>
+                            <a href="#" class="reload" id="btnAtrasVentaMapa" data-placement="top"
+                               data-original-title="Regresar al mapa">
+                            </a>
+                            <a href="#" class="reload hidden" id="btnAtrasDivisionVenta" data-placement="top"
+                               data-original-title="Regresar">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="graficoDivisionVenta" class="chart" style="height: 250px;">
+                        </div>
+                    </div>
+                </div>
+                <!-- END CHART PORTLET-->
+            </div>
+        </div>
+        <div class="row" style="margin-top: 40px">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <!-- BEGIN CHART PORTLET-->
+                <div class="portlet light bordered sombreado">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <span id="nameDivisionVentaMensual" class="caption-subject bold uppercase font-green-haze"> DISTRIBUCIÓN MENSUAL</span>
+                        </div>
+                        <div class="tools">
+                            <a href="#" class="reload hidden" id="btnAtrasDivisionVentaMensual" data-placement="top"
+                               data-original-title="Reiniciar">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="graficoDivisionVentaMensual" class="chart" style="height: 250px;">
+                        </div>
+                    </div>
+                </div>
+                <!-- END CHART PORTLET-->
+            </div>
+        </div>
+    </div>
+    <!-- END ROW -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- BEGIN MAPAS LEVEL PLUGINS -->
+    <script src="{{ asset('easyadmin/plugins/Highmaps/code/highmaps.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/Highmaps/code/modules/exporting.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/Highmaps/mapdata/countries/cu/ecodic-all.js') }}"></script>
+    <!-- END  GRAFICOS MAPAS LEVEL PLUGINS -->
+    <!-- BEGIN GRAFICOS HIGHSTOCK LEVEL PLUGINS -->
+    <script src="{{ asset('easyadmin/plugins/highstock/code/highstock.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/highstock/code/modules/annotations.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/highstock/code/modules/exporting.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/highstock/code/modules/export-data.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/highstock/code/modules/export-clientside.js') }}"></script>
+    <!-- END  GRAFICOS HIGHSTOCK LEVEL PLUGINS -->
+    <!-- BEGIN MI PLANTILLA  LEVEL PLUGINS -->
+    <script src="{{ asset('easyadmin/plantilla1/js/waypoints.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plantilla1/js/counterup.min.js') }}"></script>
+    <script src="{{ asset('easyadmin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/pages/js/components-pickers.js') }}"></script>
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <!-- END GRAFICOS LEVEL PLUGINS -->
+
+    <script>
+        jQuery(document).ready(function () {
+
+            (function () {
+                {% if not (app.user.isActive) %}
+                window.location.href = "{{ path('login') }}";
+                {% endif %}
+            })();
+
+            // jQuery counterUp
+            $('[data-toggle="counter-up"]').counterUp({
+                delay: 10,
+                time: 1000
+            });
+
+            ComponentsPickers.init();
+
+            //Declaracion de variables
+            var division = '';
+            var n;
+            var totalEstimadoVentaDivision = [];
+            var totalEstimadoVentaDivisionMes = [];
+            var totalEstimadoVentaCentroCosto = [];
+            var totalEstimadoVentaCentroCostoMes = [];
+
+
+            //Funciones del mapa
+
+            var data1 = [
+                ['cu-ho', 0],
+                ['cu-ar', 1],
+                ['cu-ma', 2],
+                ['cu-vc', 3],
+                ['cu-5812', 4],
+                ['cu-ij', 5],
+                ['cu-ss', 6],
+                ['cu-ca', 7],
+                ['cu-cm', 8],
+                ['cu-ch', 9],
+                ['cu-cf', 10],
+                ['cu-gu', 11],
+                ['cu-gr', 12],
+                ['cu-lt', 13],
+                ['cu-sc', 14],
+                ['cu-mq', 15],
+                ['cu-pr', 16]
+            ];
+            var data2 = [
+                ['cu-ma', 0],
+                ['cu-ar', 0],
+                ['cu-mq', 0],
+                ['cu-pr', 0],
+                ['cu-ij', 0],
+                ['cu-ch', 9],
+                ['cu-vc', 6],
+                ['cu-ss', 6],
+                ['cu-ca', 6],
+                ['cu-cm', 3],
+                ['cu-cf', 6],
+                ['cu-ho', 3],
+                ['cu-gu', 3],
+                ['cu-gr', 3],
+                ['cu-lt', 3],
+                ['cu-sc', 3]
+            ];
+            var dataOccidente = [
+                ['cu-ma', 0],
+                ['cu-ar', 0],
+                ['cu-mq', 0],
+                ['cu-pr', 0],
+                ['cu-ij', 0]
+            ];
+
+            graficoInicio(data2, 1000);
+
+            // Create the map
+            function graficoInicio(data, anima) {
+                Highcharts.mapChart('graficoPrincipal', {
+                    chart: {
+                        map: 'countries/cu/cu-all'
+                    },
+                    title: {
+                        text: null
+                    },
+                    exporting: {
+                        enabled: false,
+                        buttons: {
+                            contextButton: {
+                                menuItems: [{
+                                    text: 'Exportar a EXCEL',
+                                    title: 'Exportar a EXCEL',
+                                    textKey: 'downloadXLS',
+                                    fallbackExportServer: false,
+                                    filename: 'SECCIONES',
+                                    onclick: function () {
+                                        this.exportChart({
+                                            type: 'application/vnd.ms-excel'
+                                        });
+                                    }
+                                }]
+                            }
+                        }
+                    },
+                    mapNavigation: {
+                        enabled: true,
+                        buttonOptions: {
+                            verticalAlign: 'bottom'
+                        }
+                    },
+                    colorAxis: {
+                        min: 0,
+                        minColor: '#36d7b7',
+                        maxColor: '#1b534c',
+                    },
+                    series: [{
+                        animation: {
+                            duration: anima
+                        },
+                        data: data,
+                        name: 'Total de ventas',
+                        states: {
+                            hover: {
+                                color: '#BADA55'
+                            }
+                        },
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}'
+                        },
+                        events: {
+                            click: function (oEvent) {
+                                alert(oEvent.point.name);
+                                /*cargarDivision(oEvent.point.name);*/
+                            }
+                        }
+                    }]
+                });
+            }
+
+            //Fin funciones del mapa
+
+            //Dashboard de gestion de Ventas
+
+            $('#linkVenta').on("click", function () {
+                $('#dashboardInicio').css("display", "none");
+                $('#dashboardVentas').css("display", "block");
+                graficoTotalEstimadoVentaDivision();
+                graficoTotalEstimadoVentaDivisionMes();
+            });
+
+            $('#btnAtrasVentaMapa').on("click", function () {
+                $('#btnAtrasDivisionVenta').addClass('hidden');
+                $('#dashboardVentas').css("display", "none");
+                $('#dashboardInicio').css("display", "block");
+                graficoInicio(data2, 1000);
+            });
+
+            $('#btnAtrasDivisionVenta').on("click", function () {
+                $('#btnAtrasDivisionVenta').addClass('hidden');
+                $('#btnAtrasVentaMapa').removeClass('hidden');
+                graficoTotalEstimadoVentaDivision();
+                totalEstimadoVentaDivisionMes = [];
+                totalEstimadoVentaCentroCostoMes = [];
+                graficoTotalEstimadoVentaDivisionMes();
+            });
+
+            //Grafico principal de ventas por divisiones
+            {% for graficoTotal in graficosTotalesEstimadosDivisionesVentas %}
+            totalEstimadoVentaDivision.push({
+                name: '{{ graficoTotal['nombre'] }}',
+                y: parseInt('{{ graficoTotal['totalVentaDivision'] }}')
+            });
+            {% endfor %}
+
+            //Grafico principal de ventas por meses
+            {% for graficoTotal in graficosTotalesEstimadosMesesVentas %}
+            totalEstimadoVentaDivisionMes.push({
+                name: '{{ graficoTotal['mes'] }}',
+                y: parseInt('{{ graficoTotal['presupuesto'] }}')
+            });
+            {% endfor %}
+
+
+            //Grafico general Ventas por divisiones
+            function graficoTotalEstimadoVentaDivision() {
+                var valorMax = totalEstimadoVentaDivision.length - 1;
+                var valorScrollbar = false;
+                if (totalEstimadoVentaDivision.length > 6) {
+                    valorMax = 5;
+                    valorScrollbar = true;
+                }
+                Highcharts.chart('graficoDivisionVenta', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: null
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    scrollbar: {
+                        enabled: valorScrollbar,
+                        liveRedraw: true,
+                        step: 1
+                    },
+                    xAxis: {
+                        type: 'category',
+                        min: 0,
+                        max: valorMax,
+                        useHTML: true
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Presupuesto Estimado',
+                            useHTML: true
+                        }
+
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        series: {
+                            borderWidth: 0,
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            getExtremesFromAll: true,
+                            dataLabels: {
+                                enabled: true,
+                                formatter: function () {
+                                    return Highcharts.numberFormat(this.y, 0, ',', '.') + ' CUP';
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                        pointFormat: '<span style="color:{point.color}">{point.name}</span>' + ' presupuesto asignado ' + '<b>{point.y:,.0f}</b>' + ' CUP'
+                    },
+
+                    "series": [
+                        {
+                            "name": "Categorías",
+                            "colorByPoint": true,
+                            "data": totalEstimadoVentaDivision,
+                            events: {
+                                click: function (oEvent) {
+                                    cargarDivision(oEvent.point.name, oEvent.point.y, oEvent.point.color);
+                                }
+                            }
+                        }
+                    ],
+                    responsive: {
+                        rules: [{
+                            condition: {
+                                maxWidth: 500
+                            },
+                            chartOptions: {
+                                scrollbar: {
+                                    enabled: true
+                                },
+                                xAxis: {
+                                    min: 0,
+                                    max: 1,
+                                    useHTML: true
+                                }
+                            }
+                        }]
+                    }
+                });
+            }
+
+            //Cargar el presupuesto estimado de la division seleccionada
+            function cargarDivision(categoria, presupuesto, colorSeleccionado) {
+
+                //mostrar el total del presupuesto
+                {% for division in divisionCentrosCostos %}
+                    divisionCentroCosto = '{{ division.nombre }}';
+                    if (divisionCentroCosto === categoria) {
+                        idDivisionCentroCosto = {{ division.id }};
+                    }
+                {% endfor %}
+
+                //mostrar si existe el grafico mensual
+
+                $(".preload").removeClass('hidden');
+
+                var mat_datos = {
+                    idPlanEstimado: {{ app.session.get('idPlanEstimado') }},
+                    division: idDivisionCentroCosto
+                };
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: '{{ path("dashboardVentaEstimadoDivisionMensual") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    $(".preload").addClass('hidden');
+                    var obj = JSON.parse(data);
+                    var divisionMensual = obj['divisionMensual'];
+                    var divisionCantroCosto = obj['divisionCentroCosto'];
+
+                    totalEstimadoVentaDivisionMes = [];
+                    for (n = 0; n < divisionMensual.length; n++) {
+                        totalEstimadoVentaDivisionMes.push({
+                            name: divisionMensual[n]['mes'],
+                            y: parseFloat(divisionMensual[n]['totalVentaDivisionMes']),
+                            color: colorSeleccionado
+                        });
+                    }
+
+                    totalEstimadoVentaCentroCosto = [];
+                    for (n = 0; n < divisionCantroCosto.length; n++) {
+                        totalEstimadoVentaCentroCosto.push({
+                            name: divisionCantroCosto[n]['nombre'],
+                            y: parseFloat(divisionCantroCosto[n]['totalVentaCentroCosto']),
+                            color: colorSeleccionado
+                        });
+                    }
+
+                    $('#nameDivisionVenta').text(' DISTRIBUCIÓN DEL PRESUPUESTO DE VENTAS EN LOS CENTROS DE COSTOS DE LA ' + categoria);
+                    $('#nameDivisionVentaMensual').text(' DISTRIBUCIÓN MENSUAL DEL PRESUPUESTO DE VENTAS EN LA ' + categoria);
+                    $('#btnAtrasVentaMapa').addClass('hidden');
+                    $('#btnAtrasDivisionVenta').removeClass('hidden');
+
+                    graficoTotalEstimadoVentaDivisionMes();
+                    graficoTotalEstimadoVentaCentroCosto();
+
+                });
+            }
+
+            //Grafico mensual Total presupuesto Estimado por divisiones
+            function graficoTotalEstimadoVentaDivisionMes() {
+                var valorMax = totalEstimadoVentaDivisionMes.length - 1;
+                var valorScrollbar = false;
+                if (totalEstimadoVentaDivisionMes.length > 6) {
+                    valorMax = 5;
+                    valorScrollbar = true;
+                }
+                Highcharts.chart('graficoDivisionVentaMensual', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: null
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    scrollbar: {
+                        enabled: valorScrollbar,
+                        liveRedraw: true,
+                        step: 1
+                    },
+                    xAxis: {
+                        type: 'category',
+                        min: 0,
+                        max: valorMax,
+                        useHTML: true
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Presupuesto Estimado',
+                            useHTML: true
+                        }
+
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        series: {
+                            borderWidth: 0,
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            getExtremesFromAll: true,
+                            dataLabels: {
+                                enabled: true,
+                                formatter: function () {
+                                    return Highcharts.numberFormat(this.y, 0, ',', '.') + ' CUP';
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                        pointFormat: '<span style="color:{point.color}">{point.name}</span>' + ' presupuesto asignado ' + '<b>{point.y:,.0f}</b>' + ' CUP'
+                    },
+
+                    "series": [
+                        {
+                            "name": "Categorías",
+                            "colorByPoint": true,
+                            "data": totalEstimadoVentaDivisionMes,
+                            events: {
+                                click: function () {
+                                   /* cargarMeses();
+                                    $('#nameMontoRestanteDivisionMostrar').css("display", "block");
+                                    $('#totalDivisionMes').css("display", "block");*/
+                                }
+                            }
+                        }
+                    ],
+                    responsive: {
+                        rules: [{
+                            condition: {
+                                maxWidth: 500
+                            },
+                            chartOptions: {
+                                scrollbar: {
+                                    enabled: true
+                                },
+                                xAxis: {
+                                    min: 0,
+                                    max: 1,
+                                    useHTML: true
+                                }
+                            }
+                        }]
+                    }
+                });
+            }
+
+            //Grafico 2do nivel Total presupuesto Estimado por centro de costos
+            function graficoTotalEstimadoVentaCentroCosto() {
+                var valorMax = totalEstimadoVentaCentroCosto.length - 1;
+                var valorScrollbar = false;
+                if (totalEstimadoVentaCentroCosto.length > 6) {
+                    valorMax = 5;
+                    valorScrollbar = true;
+                }
+                Highcharts.chart('graficoDivisionVenta', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: null
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    scrollbar: {
+                        enabled: valorScrollbar,
+                        liveRedraw: true,
+                        step: 1
+                    },
+                    xAxis: {
+                        type: 'category',
+                        min: 0,
+                        max: valorMax,
+                        useHTML: true
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Presupuesto Estimado',
+                            useHTML: true
+                        }
+
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        series: {
+                            borderWidth: 0,
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            getExtremesFromAll: true,
+                            dataLabels: {
+                                enabled: true,
+                                formatter: function () {
+                                    return Highcharts.numberFormat(this.y, 0, ',', '.') + ' CUP';
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                        pointFormat: '<span style="color:{point.color}">{point.name}</span>' + ' presupuesto asignado ' + '<b>{point.y:,.0f}</b>' + ' CUP'
+                    },
+
+                    "series": [
+                        {
+                            "name": "Categorías",
+                            "colorByPoint": true,
+                            "data": totalEstimadoVentaCentroCosto,
+                            events: {
+                                click: function (oEvent) {
+                                    /*cargarCentroCosto(oEvent.point.name, oEvent.point.y, oEvent.point.color);*/
+                                }
+                            }
+                        }
+                    ],
+                    responsive: {
+                        rules: [{
+                            condition: {
+                                maxWidth: 500
+                            },
+                            chartOptions: {
+                                scrollbar: {
+                                    enabled: true
+                                },
+                                xAxis: {
+                                    min: 0,
+                                    max: 1,
+                                    useHTML: true
+                                }
+                            }
+                        }]
+                    }
+                });
+            }
+
+            //Fin del dashboard de la gestion de ventas
+
+            //Cargar el presupuesto estimado de la division seleccionada
+            function cargarDivision1(division) {
+
+                $(".preload").removeClass('hidden');
+
+                var mat_datos = {
+
+                    idPlanEstimado: {{ app.session.get('idPlanEstimado') }},
+                    division: division
+
+                };
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "html",
+                    url: '{{ path("estadoProcesosDivision") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    $(".preload").addClass('hidden');
+                    if (data.indexOf('dataProcesos') != -1) {
+
+                        $('#graficoPrincipal').css("display", "none");
+                        $('#containerResultado').replaceWith(data).css("display", "block");
+                        ;
+                        $('#dataProcesos').DataTable();
+
+                    } else {
+                        alertify.alert('<strong>' + data + '</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label', 'Aceptar')
+                    }
+                });
+
+            }
+
+            function obtenerDivision() {
+                for (n = 0; n < totalEstimadoVentaDivisionMes.length; n++) {
+                    switch (totalEstimadoVentaDivisionMes[n]['name']) {
+                        case 'enero':
+                            $("#enero").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'febrero':
+                            $("#febrero").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'marzo':
+                            $("#marzo").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'abril':
+                            $("#abril").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'mayo':
+                            $("#mayo").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'junio':
+                            $("#junio").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'julio':
+                            $("#julio").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'agosto':
+                            $("#agosto").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'septiembre':
+                            $("#septiembre").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'octubre':
+                            $("#octubre").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'noviembre':
+                            $("#noviembre").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                        case 'diciembre':
+                            $("#diciembre").val(totalEstimadoVentaDivisionMes[n]['y']);
+                            break;
+                    }
+                }
+            }
+
+
+        });
+    </script>
+
+{% endblock %}

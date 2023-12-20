@@ -1,0 +1,274 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * DivisionCentroCosto
+ *
+ * @ORM\Table(name="division_centro_costo")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\DivisionCentroCostoRepository")
+ */
+class DivisionCentroCosto
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nombre", type="string", length=100, unique=true)
+     */
+    private $nombre;
+
+    /**
+     * @ORM\OneToMany(targetEntity="CentroCosto", mappedBy="divisionCentroCosto")
+     */
+    private $centrosCostos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="PlanEstimadoDivision", mappedBy="divisionCentroCosto")
+     */
+    private $planEstimadoDivisiones;
+
+    /**
+     * @ORM\OneToMany(targetEntity="PlanEstimadoDivisionSalario", mappedBy="divisionCentroCosto")
+     */
+    private $planEstimadoRecursosHumanos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="PlanEstimadoDivisionMes", mappedBy="divisionCentroCosto")
+     */
+    private $planEstimadoDivisionesMeses;
+
+    /**
+     * @ORM\OneToMany(targetEntity="PlanEstimadoDivisionMesSalario", mappedBy="divisionCentroCosto")
+     */
+    private $planEstimadoRecursosHumanosMeses;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->centrosCostos = new ArrayCollection();
+        $this->planEstimadoDivisiones = new ArrayCollection();
+        $this->planEstimadoDivisionesMeses = new ArrayCollection();
+        $this->planEstimadoRecursosHumanos = new ArrayCollection();
+        $this->planEstimadoRecursosHumanosMeses = new ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     *
+     * @return DivisionCentroCosto
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Add centrosCosto
+     *
+     * @param CentroCosto $centrosCosto
+     *
+     * @return DivisionCentroCosto
+     */
+    public function addCentrosCosto(CentroCosto $centrosCosto)
+    {
+        $this->centrosCostos[] = $centrosCosto;
+
+        return $this;
+    }
+
+    /**
+     * Remove centrosCosto
+     *
+     * @param CentroCosto $centrosCosto
+     */
+    public function removeCentrosCosto(CentroCosto $centrosCosto)
+    {
+        $this->centrosCostos->removeElement($centrosCosto);
+    }
+
+    /**
+     * Get centrosCostos
+     *
+     * @return Collection
+     */
+    public function getCentrosCostos()
+    {
+        return $this->centrosCostos;
+    }
+
+    /**
+     * Add planEstimadoDivisione
+     *
+     * @param PlanEstimadoDivision $planEstimadoDivisione
+     *
+     * @return DivisionCentroCosto
+     */
+    public function addPlanEstimadoDivisione(PlanEstimadoDivision $planEstimadoDivisione)
+    {
+        $this->planEstimadoDivisiones[] = $planEstimadoDivisione;
+
+        return $this;
+    }
+
+    /**
+     * Remove planEstimadoDivisione
+     *
+     * @param PlanEstimadoDivision $planEstimadoDivisione
+     */
+    public function removePlanEstimadoDivisione(PlanEstimadoDivision $planEstimadoDivisione)
+    {
+        $this->planEstimadoDivisiones->removeElement($planEstimadoDivisione);
+    }
+
+    /**
+     * Get planEstimadoDivisiones
+     *
+     * @return Collection
+     */
+    public function getPlanEstimadoDivisiones()
+    {
+        return $this->planEstimadoDivisiones;
+    }
+
+    /**
+     * Add planEstimadoRecursosHumano
+     *
+     * @param PlanEstimadoDivisionSalario $planEstimadoRecursosHumano
+     *
+     * @return DivisionCentroCosto
+     */
+    public function addPlanEstimadoRecursosHumano(PlanEstimadoDivisionSalario $planEstimadoRecursosHumano)
+    {
+        $this->planEstimadoRecursosHumanos[] = $planEstimadoRecursosHumano;
+
+        return $this;
+    }
+
+    /**
+     * Remove planEstimadoRecursosHumano
+     *
+     * @param PlanEstimadoDivisionSalario $planEstimadoRecursosHumano
+     */
+    public function removePlanEstimadoRecursosHumano(PlanEstimadoDivisionSalario $planEstimadoRecursosHumano)
+    {
+        $this->planEstimadoRecursosHumanos->removeElement($planEstimadoRecursosHumano);
+    }
+
+    /**
+     * Get planEstimadoRecursosHumanos
+     *
+     * @return Collection
+     */
+    public function getPlanEstimadoRecursosHumanos()
+    {
+        return $this->planEstimadoRecursosHumanos;
+    }
+
+    /**
+     * Add planEstimadoDivisionesMese
+     *
+     * @param PlanEstimadoDivisionMes $planEstimadoDivisionesMese
+     *
+     * @return DivisionCentroCosto
+     */
+    public function addPlanEstimadoDivisionesMese(PlanEstimadoDivisionMes $planEstimadoDivisionesMese)
+    {
+        $this->planEstimadoDivisionesMeses[] = $planEstimadoDivisionesMese;
+
+        return $this;
+    }
+
+    /**
+     * Remove planEstimadoDivisionesMese
+     *
+     * @param PlanEstimadoDivisionMes $planEstimadoDivisionesMese
+     */
+    public function removePlanEstimadoDivisionesMese(PlanEstimadoDivisionMes $planEstimadoDivisionesMese)
+    {
+        $this->planEstimadoDivisionesMeses->removeElement($planEstimadoDivisionesMese);
+    }
+
+    /**
+     * Get planEstimadoDivisionesMeses
+     *
+     * @return Collection
+     */
+    public function getPlanEstimadoDivisionesMeses()
+    {
+        return $this->planEstimadoDivisionesMeses;
+    }
+
+    /**
+     * Add planEstimadoRecursosHumanosMese
+     *
+     * @param PlanEstimadoDivisionMesSalario $planEstimadoRecursosHumanosMese
+     *
+     * @return DivisionCentroCosto
+     */
+    public function addPlanEstimadoRecursosHumanosMese(PlanEstimadoDivisionMesSalario $planEstimadoRecursosHumanosMese)
+    {
+        $this->planEstimadoRecursosHumanosMeses[] = $planEstimadoRecursosHumanosMese;
+
+        return $this;
+    }
+
+    /**
+     * Remove planEstimadoRecursosHumanosMese
+     *
+     * @param PlanEstimadoDivisionMesSalario $planEstimadoRecursosHumanosMese
+     */
+    public function removePlanEstimadoRecursosHumanosMese(PlanEstimadoDivisionMesSalario $planEstimadoRecursosHumanosMese)
+    {
+        $this->planEstimadoRecursosHumanosMeses->removeElement($planEstimadoRecursosHumanosMese);
+    }
+
+    /**
+     * Get planEstimadoRecursosHumanosMeses
+     *
+     * @return Collection
+     */
+    public function getPlanEstimadoRecursosHumanosMeses()
+    {
+        return $this->planEstimadoRecursosHumanosMeses;
+    }
+
+}

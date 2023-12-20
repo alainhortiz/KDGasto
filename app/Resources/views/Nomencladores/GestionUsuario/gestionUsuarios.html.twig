@@ -1,0 +1,198 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/tema/DataTables-1.10.10/media/css/jquery.dataTables.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="portlet light estilosForm">
+            <div class="portlet-title">
+                <div class="caption font-green">
+                    <i class="icon-users font-green"></i>
+                    <span class="caption-subject bold uppercase">GESTIONAR USUARIOS</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div style="padding-top: 10px">
+                    <div class="portlet box grey-cascade">
+                        <div class="portlet-title" style="background-color: #2b3643 ; ; overflow-x: auto">
+                            <div class="caption">
+                                <i class="fa fa-table"></i>
+                            </div>
+                            <div class="tools">
+                                <div class="caption bold uppercase" style="float: right">
+                                    <a href="{{ path('addUsuario') }}" style="text-decoration: none;color: #ededed;" data-toggle="tooltip" data-placement="top" title="Agregar Usuario">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                        AGREGAR
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="portlet-body" style="background-color: #afbac0">
+                            <table class="table table-striped table-bordered table-hover myDataTable" id="dataUsuario">
+                                <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Nombre</th>
+                                    <th>Primer Apellido</th>
+                                    <th>Segundo Apellido</th>
+                                    <th>Centro de Costo</th>
+                                    <th class="text-center">Activo</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for usuario in usuarios %}
+                                    {% if not ('ROLE_SUPERUSUARIO' in usuario.getUsuarioRoles()) %}
+                                        <tr data-id ="{{ usuario.id }}">
+                                            <td>{{ usuario.username }}</td>
+                                            <td>{{ usuario.nombre }}</td>
+                                            <td>{{ usuario.primerApellido }}</td>
+                                            <td>{{ usuario.segundoApellido }}</td>
+                                            <td>{{ usuario.centroCosto.nombre }}</td>
+                                            <td class="text-center">
+                                                {% if usuario.isActive == 1 %}
+                                                    <div class="md-checkbox" style="margin-left: 50%">
+                                                        <input type="checkbox" disabled class="md-check" checked>
+                                                        <label>
+                                                            <span></span>
+                                                            <span class="check"></span>
+                                                            <span class="box"></span>
+                                                        </label>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="md-checkbox" style="margin-left: 50%">
+                                                        <input type="checkbox" disabled class="md-check">
+                                                        <label>
+                                                            <span></span>
+                                                            <span class="check"></span>
+                                                            <span class="box"></span>
+                                                        </label>
+                                                    </div>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="{{ path('editUsuario' , {idUsuario:usuario.id}) }}" style="margin-top: 5px" class="btn default btn-xs green-stripe" data-toggle="tooltip" data-placement="left"
+                                                   title="Modificar el Usuario">
+                                                    Editar </a>
+                                                <a href="{{ path('resetearPasswordForm' , {idUsuario:usuario.id}) }}" style="margin-top: 5px" class="btn default btn-xs blue-stripe resetear" data-toggle="tooltip" data-placement="left"
+                                                   title="Resetear contraseña el Usuario">
+                                                    Resetear contraseña </a>
+                                                <a href="#" style="margin-top: 5px" class="btn default btn-xs red-stripe delete" data-toggle="tooltip" data-placement="left"
+                                                   title="Desactivar el Usuario">
+                                                    Desactivar </a>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/tema/DataTables-1.10.10/media/js/jquery.dataTables.js') }}"></script>
+    <script>
+        jQuery(document).ready(function() {
+
+            (function(){
+                {% if not (is_granted("ROLE_ADMINISTRADOR") or is_granted("ROLE_SUPERUSUARIO")) %}
+                window.location.href = "{{ path('login') }}";
+                {% else %}
+                {% for nivel in app.user.nivelAccesos() if nivel == 'ADMINISTRACION' %}
+                {% else %}
+                window.location.href = "{{ path('login') }}";
+                {% endfor %}
+                {% endif %}
+            })();
+
+            $('#dataUsuario').DataTable();
+
+            $('#dataUsuario tbody').on('click', '.delete', function () {
+
+                var row = $(this).parents('tr');
+
+                var mat_datos = { idUsuario: row.data('id') };
+
+                alertify.confirm('Basic: false').set('message', 'Seguro que desea desactivar el Usuario seleccionado').set('onok', function(){
+
+                    $(".preload").removeClass('hidden');
+
+                    $.ajax({
+                        type: "POST",
+                        dataType: "html",
+                        url: '{{ path("deleteUsuario") }}',
+                        data: mat_datos
+                    }).done(function (data) {
+                        $(".preload").addClass('hidden');
+                        if(data == 'ok'){
+
+                            alertify.alert('<strong>El usuario ha sido desactivado correctamente</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmacion</h4>')
+                                .set('label','Aceptar')
+                        }else  if(data == 'desactivar'){
+
+                            alertify.confirm('Basic: false')
+                                .set('message', 'Hay datos relacionados con este usuario , no se puede eliminar </br>' +
+                                    'Desea desactivar el usuario seleccionado, el usuario permanecerá en el sistema pero no se podrá usar')
+                                .set('onok', function(){
+
+                                $(".preload").removeClass('hidden');
+
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "html",
+                                    url: '{{ path("desactivarUsuario") }}',
+                                    data: mat_datos
+                                }).done(function (data) {
+                                    $(".preload").addClass('hidden');
+                                    if(data == 'ok'){
+
+                                        alertify.alert('<strong>El usuario  ha sido desactivado correctamente</strong>')
+                                            .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmacion</h4>')
+                                            .set('label','Aceptar')
+                                            .set('onok', function(){
+
+                                                row.fadeOut();
+                                            });
+                                    }else {
+                                        alertify.alert('<strong>'+data+'</strong>')
+                                            .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmacion</h4>')
+                                            .set('label','Aceptar')
+                                    }
+                                });
+                            });
+
+
+                        }else {
+                            alertify.alert('<strong>'+data+'</strong>')
+                                .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                    '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmacion</h4>')
+                                .set('label','Aceptar')
+                        }
+                    });
+                });
+            });
+
+
+        });
+    </script>
+{% endblock %}

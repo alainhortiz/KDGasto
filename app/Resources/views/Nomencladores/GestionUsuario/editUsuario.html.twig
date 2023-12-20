@@ -1,0 +1,335 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('easyadmin/plugins/multiselect/css/multi-select.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <div class="preload hidden">
+        <div class="logo"></div>
+        <div class="loader-frame">
+            <div class="loader1" id="loader1"></div>
+            <div class="loader2" id="loader2"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="portlet light estilosForm">
+                <div class="portlet-title">
+                    <div class="caption font-green">
+                        <i class="icon-user font-green"></i>
+                        <span class="caption-subject bold uppercase"> MODIFICAR USUARIO</span>
+                    </div>
+                </div>
+                <div class="portlet-body form">
+                    <form role="form" id="addUsuario">
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <div class="form-group form-md-line-input input-icon right" id="dusername">
+                                        <i style="color: #dc141b" class="fa fa-exclamation tooltips hidden  username" data-placement="bottom" data-original-title="Este campo es obligatorio" ></i>
+                                        <input type="text"  class="form-control" id="username" name="username" value="{{ usuario.username }}">
+                                        <label for="username">USUARIO</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <div class="form-group form-md-line-input  input-icon right" id="dnombre">
+                                        <i style="color: #dc141b" class="fa fa-exclamation tooltips hidden  nombre" data-placement="bottom" data-original-title="Este campo es obligatorio" ></i>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ usuario.nombre }}">
+                                        <label for="nombre">NOMBRE</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <div class="form-group form-md-line-input  input-icon right" id="dprimerApellido">
+                                        <i style="color: #dc141b" class="fa fa-exclamation tooltips hidden  primerApellido" data-placement="bottom" data-original-title="Este campo es obligatorio" ></i>
+                                        <input type="text" class="form-control" id="primerApellido" name="primerApellido" value="{{ usuario.primerApellido }}">
+                                        <label for="primerApellido">PRIMER APELLIDO</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <div class="form-group form-md-line-input  input-icon right" id="dsegundoApellido">
+                                        <i style="color: #dc141b" class="fa fa-exclamation tooltips hidden  segundoApellido" data-placement="bottom" data-original-title="Este campo es obligatorio" ></i>
+                                        <input type="text" class="form-control" id="segundoApellido" name="segundoApellido" value="{{ usuario.segundoApellido }}">
+                                        <label for="segundoApellido">SEGUNDO APELLIDO</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 20px">
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <div class="form-group form-md-line-input  input-icon right">
+                                        <i style="color: #dc141b; margin-right: 10px" class="fa fa-exclamation tooltips hidden  categoriaCentroCosto" data-placement="bottom" data-original-title="Este campo es obligatorio" ></i>
+                                        <select class="form-control" id="categoriaCentroCosto" name="categoriaCentroCosto" >
+                                            <option value="{{ usuario.centroCosto.divisionCentroCosto.id }}">{{ usuario.centroCosto.divisionCentroCosto.nombre }}</option>
+                                            {% for division in  divisionCentrosCostos %}
+                                                <option value="{{ division.id }}">{{ division.nombre }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="categoriaCentroCosto">DIVISIÓN</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <div class="form-group form-md-line-input  input-icon right">
+                                        <i style="color: #dc141b; margin-right: 10px" class="fa fa-exclamation tooltips hidden  centroCosto" data-placement="bottom" data-original-title="Este campo es obligatorio" ></i>
+                                        <select class="form-control" id="centroCosto" name="centroCosto" >
+                                            <option id="inicio" value="{{ usuario.centroCosto.id }}">{{ usuario.centroCosto.nombre }}</option>
+                                        </select>
+                                        <label for="centroCosto">CENTRO DE COSTO</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    {% if usuario.isActive == 1 %}
+                                        <div class="md-checkbox" style="margin-top: 35px;margin-left: 10px">
+                                            <input type="checkbox" id="editActivo" class="md-check" checked>
+                                            <label for="editActivo">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span>
+                                                ACTIVO </label>
+                                        </div>
+                                    {% else %}
+                                        <div class="md-checkbox" style="margin-top: 35px;margin-left: 10px">
+                                            <input type="checkbox" id="editActivo" class="md-check">
+                                            <label for="editActivo">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span>
+                                                ACTIVO </label>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 40px">
+                                <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 col-lg-offset-1" style="border-top: none">
+                                    <div class="form-group">
+                                        <label class="control-label " for="multi-roles"><strong>Seleccione
+                                                los roles:</strong></label>
+                                        <select multiple="multiple" id="multi-roles" name="multi-roles"
+                                                class="form-control">
+                                            {% for role in roles %}
+                                                {% if not (role in usuario.getUsuarioRoles() or role.nombre == 'ROLE_SUPERUSUARIO' )  %}
+                                                    <option  value={{ role.id }}>{{ role.nombre }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for role in usuario.getUsuarioRoles() %}
+                                                {% if not (role.nombre == 'ROLE_SUPERUSUARIO')  %}
+                                                    <option class="misRoles" value={{ role.id }}>{{ role.nombre }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-md-12 col-sm-12" style="border-top: none">
+                                    <div class="form-group">
+                                        <label class="control-label " for="multi-modulos"><strong>Seleccione
+                                                los módulos:</strong></label>
+                                        <select multiple="multiple" id="multi-modulos" name="multi-modulos"
+                                                class="form-control">
+                                            {% for nivel in nivelAccesos %}
+                                                {% if not (nivel in usuario.getUsuarioNivelAccesos()) %}
+                                                   <option value={{ nivel.id }}>{{ nivel.nivel }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for nivel in usuario.getUsuarioNivelAccesos() %}
+                                                <option class="misModulos" value={{ nivel.id }}>{{ nivel.nivel }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions noborder">
+                            <button type="button" class="btn btn-secondary" id="btnGuardar">Guardar</button>
+                            <button type="button" class="btn btn default" id="btnSalir">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('easyadmin/plugins/multiselect/js/jquery.multi-select.js') }}"></script>
+    <script>
+        jQuery(document).ready(function() {
+
+            (function(){
+                {% if not (is_granted("ROLE_ADMINISTRADOR") or is_granted("ROLE_SUPERUSUARIO")) %}
+                    window.location.href = "{{ path('login') }}";
+                {% endif %}
+            })();
+
+            $('#multi-roles').multiSelect();
+            $('#multi-modulos').multiSelect();
+
+            $('.ms-list .ms-elem-selectable.misModulos').each(function(){
+                $(this).css('display', 'none');
+                $(this).addClass('ms-hover');
+                $(this).addClass('ms-selected');
+
+            });
+
+            $('.ms-list .ms-elem-selection.misModulos').each(function(){
+                $(this).addClass('ms-selected');
+                $(this).css('display', '');
+            });
+
+            $('.ms-list .ms-elem-selectable.misRoles').each(function(){
+                $(this).css('display', 'none');
+                $(this).addClass('ms-hover');
+                $(this).addClass('ms-selected');
+
+            });
+
+            $('.ms-list .ms-elem-selection.misRoles').each(function(){
+                $(this).addClass('ms-selected');
+                $(this).css('display', '');
+            });
+
+            //--------- abandonar el formulario -----------------
+            $('#btnSalir').on('click', function ()
+            {
+                window.location.href = "{{ path('gestionarUsuarios') }}";
+
+            });
+
+            $('#addUsuario input[type=text]').on('blur' , function () {
+
+                var name = $(this).prop('name');
+                if($(this).val().trim() == ''){
+                    $('#d'+name).addClass('form-md-floating-label');
+                }
+            });
+
+            $('#categoriaCentroCosto').on('change', function () {
+                $("#inicio").html('Seleccione ...').val('0');
+                armarSelectCentroCosto();
+            });
+
+            function armarSelectCentroCosto(){
+                var html = '';
+                var divisionCentroCosto = $('#categoriaCentroCosto').val();
+                $("option").remove('.cambioCentroCosto');
+                $("#inicio").after('<option class="cambioCentroCosto"></option>');
+
+                {% for centro in  centrosCostos %}
+                var idDivisionCentroCosto = '{{ centro.divisionCentroCosto.id }}';
+
+                if (idDivisionCentroCosto == divisionCentroCosto) {
+                    var id = {{ centro.id }};
+                    var name = '{{ centro.nombre }}';
+                    html += '<option class="cambioCentroCosto" value="' + id + '">' + name + '</option>';
+                }
+                {% endfor %}
+                $(".cambioCentroCosto").replaceWith(html);
+            }
+
+            var activo = 0;
+
+            $('#btnGuardar').on('click',function () {
+
+                var errores = 0;
+                $('#addUsuario input[type=text]').each(function () {
+
+                    var name = $(this).prop('name');
+                    if($(this).val().trim() == ''){
+                        $('.'+name).removeClass('hidden');
+                        errores++;
+                    }else {
+                        $('.'+name).addClass('hidden');
+                    }
+                });
+
+                $('#addUsuario select').each(function () {
+
+                    var name = $(this).prop('name');
+                    if($(this).val() == '0'){
+                        $('.'+name).removeClass('hidden');
+                        errores++;
+                    }else {
+                        $('.'+name).addClass('hidden');
+                    }
+                });
+                if(errores !== 0) return false;
+
+                if(!($(' li.ms-elem-selectable ').hasClass('ms-selected')))
+                {
+                    alertify.alert('<strong>Debe  seleccionar al menos un rol para el usuario.</strong>')
+                        .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                            '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                        .set('label','Aceptar');
+                    return false;
+                }
+
+                var roles = [];
+                var modulos = [];
+
+                $('#ms-multi-roles li.ms-elem-selectable ').each(function(){
+
+                    if($(this).hasClass('ms-selected')){
+
+                        var texto = $(this).text();
+                        roles.push(texto);
+                    }
+                });
+
+                $('#ms-multi-modulos li.ms-elem-selectable ').each(function(){
+
+                    if($(this).hasClass('ms-selected')){
+
+                        var valor = $(this).text();
+                        modulos.push(valor);
+                    }
+                });
+
+                $(".preload").removeClass('hidden');
+
+                activo = 0;
+                if ($('#editActivo').prop('checked')) {
+                    activo = 1;
+                }
+
+                var mat_datos = {
+                    idUsuario: '{{ usuario.id }}',
+                    username: $("#username").val(),
+                    nombre: $("#nombre").val(),
+                    primerApellido: $("#primerApellido").val(),
+                    segundoApellido: $("#segundoApellido").val(),
+                    centroCosto: $("#centroCosto").val(),
+                    modulos: modulos,
+                    roles: roles,
+                    activo : activo
+                };
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "html",
+                    url: '{{ path("updateUsuario") }}',
+                    data: mat_datos
+                }).done(function (data) {
+
+                    $(".preload").addClass('hidden');
+                    if(data == 'ok'){
+
+                        alertify.alert('<strong>El usuario ha sido modificado correctamente</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ok-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Confirmación</h4>')
+                            .set('label','Aceptar')
+                            .set('onok', function () {
+                                window.location.href = "{{ path('gestionarUsuarios') }}";
+                            });
+                    }else{
+                        alertify.alert('<strong>'+ data +'</strong>')
+                            .setHeader('<span class="glyphicon glyphicon-ban-circle" style="font-size: 20px"></span>' +
+                                '<h4 class="modal-title" style="display: inline-block; margin-left: 10px">Error</h4>')
+                            .set('label','Aceptar')
+                    }
+                });
+
+            });
+
+        });
+    </script>
+{% endblock %}

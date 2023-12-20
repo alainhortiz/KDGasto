@@ -1,0 +1,79 @@
+<div class="row" id="containerResultado" style="margin-top: 20px">
+    <div class="caption font-green" style="float: right ; margin-right: 20px ; margin-top: -55px">
+        <a href="#" class="fa fa-file-excel-o fa-3x font-green"
+           data-toggle="tooltip" data-placement="left" title="Exportar a Excel"></a>
+    </div>
+    <div class="col-md-12">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+        <div class="portlet box grey-cascade">
+            <div class="portlet-title" style="background-color: #2b3643">
+                <div class="caption">
+                    <i class="fa fa-table"></i>
+                </div>
+                <div class="caption" style="float: right">
+                    <span>planes</span>
+                </div>
+            </div>
+            <div class="portlet-body" style="background-color: #afbac0 ; overflow-x: auto">
+                <table class="table table-striped table-bordered table-hover table-responsive" id="dataProcesos">
+                    <thead>
+                    <tr>
+                        <th>
+                            Indicadores
+                        </th>
+                        <th>
+                            Total
+                        </th>
+                        <th>
+                            División
+                        </th>
+                        <th>
+                            División Mensual
+                        </th>
+                        <th>
+                            Centro de Costo
+                        </th>
+                        <th>
+                            Centro de Costo Mensual
+                        </th>
+                        <th>
+                            Estado
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for paciente in pacientes %}
+                        <tr data-id="{{ paciente.id }}">
+                            <td>{{ paciente.nombreCompleto() }}</td>
+                            <td>{{ paciente.carnetIdentidad }}</td>
+                            <td>{{ paciente.etiologia.nombre }}</td>
+                            <td>{{ paciente.getTipoHepatitis().nombre }}</td>
+                            <td>{{ paciente.fechaDiagnostico|date('Y-m-d') }}</td>
+                            <td>
+                                {% if paciente.tratamientoResultados[paciente.tratamientoResultados|length - 1].evolucionClinica.id != 8 %}
+                                    <a href="{{ path('editPaciente' , {idPaciente:paciente.id}) }}"
+                                       class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i> Editar</a>
+                                    {% if paciente.gestante == 1 %}
+                                        <a href="{{ path('gestionarHijo' , {idPaciente:paciente.id}) }}"
+                                           class="btn btn-info  btn-xs">
+                                            {#<span class="badge">{{  paciente.pacienteGestante.cantidadHijos == 0 ? '' : paciente.pacienteGestante.cantidadHijos }}</span>#}
+                                            <span class="badge">{{ paciente.pacienteGestante.cantidadHijos }}</span>
+                                            <i class="fa fa-check"></i>
+                                            Hijos
+                                        </a>
+                                    {% endif %}
+                                    <a href="#" class="btn btn-danger btn-xs delete"><i class="fa fa-trash-o "></i>Borrar</a>
+                                {% else %}
+                                    {{ paciente.tratamientoResultados[paciente.tratamientoResultados|length - 1].evolucionClinica.nombre }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- END EXAMPLE TABLE PORTLET-->
+    </div>
+</div>
+

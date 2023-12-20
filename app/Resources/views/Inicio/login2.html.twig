@@ -1,0 +1,100 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Template created to Confin APP, WebSite.">
+    <meta name="author" content="By DmN">
+    <link rel="manifest" href="#">
+
+    <!-- PARA CUALQUIER NAVEGADOR -->
+    {#<link rel="icon" href="favicon.png" sizes="32x32" type="image/png">#}
+    <link rel="icon" type="image/phg" sizes="32x32"  href="{{ asset('images/favicon.png') }}"/>
+
+    <!-- PARA LOS MODELOS MAS RECIENTES DE IPAD Y IPHONE -->
+    {#<link rel="apple-touch-icon" href="apple-touch-icon.png">#}
+    <link rel="apple-touch-icon" href="#"/>
+    {#<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-152x152-precomposed.png" type="image/png" sizes="152x152">#}
+    <link rel="apple-touch-icon-precomposed" href="#') }}" type="image/png" sizes="152x152">
+    {#<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-152x152-precomposed.png" type="image/png"   sizes="120x120">#}
+    <link rel="apple-touch-icon-precomposed" href="#') }}" type="image/png"   sizes="120x120">
+
+    <!-- PARA GOOGLE TV -->
+    {#<link rel="icon" href="favicon-googletv.png" sizes="96x96" type="image/png">#}
+    <link rel="icon" type="image/phg" sizes="96x96"  href="{{ asset('images/favicon.png') }}"/>
+
+    <title>GESCOST</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ asset('easyadmin/login/loginLia/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    {#<link href="css/style.css" rel="stylesheet">#}
+    <link href="{{ asset('easyadmin/login/loginLia/css/style.css') }}" rel="stylesheet">
+
+    <!-- Custom icons for this template -->
+    <link href="{{ asset('easyadmin/login/loginLia/css/fontawesome/css/all.css') }}" rel="stylesheet"/>
+    <!-- <link href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" rel="stylesheet" crossorigin="anonymous"> -->
+
+    {#<script defer src="js/modernizr-2.8.3-respond-1.4.2.min.js"></script>#}
+</head>
+
+<body>
+
+<div class="cf-bg-full">
+    <div class="card card-container">
+        <!-- <img class="profile-img-card" src="//lh3.googleusercontent.com/-6V8xOA6M7BA/AAAAAAAAAAI/AAAAAAAAAAA/rzlHcD0KYwo/photo.jpg?sz=120" alt="" /> -->
+        <img id="profile-img" class="profile-img-card"  src="{{ asset('images/gescost_logo.png')}}"/>
+        <h1 class="cf-h1-login">GESCOST</h1>
+        <p id="profile-name" class="profile-name-card text-center" >SISTEMA INTEGRAL PARA LA GESTIÓN DE COSTOS DE LOS CENTROS Y SERVICIOS DE ECODIC</p>
+
+        <form class="form-signin" id="loginForm" action="{{ path('login_check') }}" method="post">
+            <span id="reauth-email" class="reauth-email"></span>
+            {% if error %}
+                <div class="alert alert-danger">
+                    <button class="close" data-close="alert"></button>
+                    <strong>Credenciales Inválidas. </strong>
+                </div>
+            {% endif %}
+            <label for="loginInpUser" style="margin-top: 30px ; margin-bottom: 10px">
+                    <span class="cf-i-container">
+                        <i class="fas fa-user-circle"></i>
+                    </span>
+                Usuario
+            </label>
+
+            <input type="text" id="loginInpUser" name="_username"  class="form-control" placeholder="Usuario" required autofocus>
+
+            <label for="loginInpPassword" style="margin-bottom: 10px">
+                    <span class="cf-i-container">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                Contraseña
+            </label>
+
+            <input type="password" id="loginInpPassword" class="form-control" placeholder="Contraseña" name="_password" autocomplete="off" required>
+
+            {#<div id="remember" class="custom-control custom-checkbox mb-3 mr-sm-2">
+                <input type="checkbox" class="custom-control-input" id="customControlInline">
+                <label class="custom-control-label" for="customControlInline">Recordar</label>
+            </div>#}
+            <input type="hidden" name="_target_path" value="/inicio" />
+            <button class="btn btn-lg btn-primary btn-block btn-signin cf-btn-login" type="submit">Aceptar</button>
+        </form><!-- /form -->
+        <div class="cf-contact-admin mt-2">
+            No tiene usuario?
+            <a href="#" class="forgot-password">
+                Contacte al administrador
+            </a>
+        </div>
+    </div><!-- /card-container -->
+</div>
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<script src="{{ asset('easyadmin/login/loginLia/js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ asset('easyadmin/login/loginLia/js/popper.min.js') }}"></script>
+<script src="{{ asset('easyadmin/login/loginLia/js/bootstrap.min.js') }}"></script>
+</body>
+

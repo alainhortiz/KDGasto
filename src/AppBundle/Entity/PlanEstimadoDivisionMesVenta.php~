@@ -1,0 +1,153 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * PlanEstimadoDivisionMesVenta
+ *
+ * @ORM\Table(name="plan_estimado_division_mes_venta")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PlanEstimadoDivisionMesVentaRepository")
+ */
+class PlanEstimadoDivisionMesVenta
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="mes", type="string", length=10)
+     */
+    private $mes;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="totalVentaDivisionMes", type="integer",nullable=true)
+     */
+    private $totalVentaDivisionMes = 0;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="DivisionCentroCosto",inversedBy="planEstimadoDivisionesMesesVentas")
+     */
+    protected $divisionCentroCosto;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="PlanEstimadoIndicadores",inversedBy="planEstimadoDivisionesMesesVentas")
+     */
+    protected $planEstimadoIndicadores;
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set mes
+     *
+     * @param string $mes
+     *
+     * @return PlanEstimadoDivisionMesVenta
+     */
+    public function setMes($mes)
+    {
+        $this->mes = $mes;
+
+        return $this;
+    }
+
+    /**
+     * Get mes
+     *
+     * @return string
+     */
+    public function getMes()
+    {
+        return $this->mes;
+    }
+
+    /**
+     * Set totalVentaDivisionMes
+     *
+     * @param integer $totalVentaDivisionMes
+     *
+     * @return PlanEstimadoDivisionMesVenta
+     */
+    public function setTotalVentaDivisionMes($totalVentaDivisionMes)
+    {
+        $this->totalVentaDivisionMes = $totalVentaDivisionMes;
+
+        return $this;
+    }
+
+    /**
+     * Get totalVentaDivisionMes
+     *
+     * @return integer
+     */
+    public function getTotalVentaDivisionMes()
+    {
+        return $this->totalVentaDivisionMes;
+    }
+
+    /**
+     * Set divisionCentroCosto
+     *
+     * @param \AppBundle\Entity\DivisionCentroCosto $divisionCentroCosto
+     *
+     * @return PlanEstimadoDivisionMesVenta
+     */
+    public function setDivisionCentroCosto(\AppBundle\Entity\DivisionCentroCosto $divisionCentroCosto = null)
+    {
+        $this->divisionCentroCosto = $divisionCentroCosto;
+
+        return $this;
+    }
+
+    /**
+     * Get divisionCentroCosto
+     *
+     * @return \AppBundle\Entity\DivisionCentroCosto
+     */
+    public function getDivisionCentroCosto()
+    {
+        return $this->divisionCentroCosto;
+    }
+
+    /**
+     * Set planEstimadoIndicadores
+     *
+     * @param \AppBundle\Entity\PlanEstimadoIndicadores $planEstimadoIndicadores
+     *
+     * @return PlanEstimadoDivisionMesVenta
+     */
+    public function setPlanEstimadoIndicadores(\AppBundle\Entity\PlanEstimadoIndicadores $planEstimadoIndicadores = null)
+    {
+        $this->planEstimadoIndicadores = $planEstimadoIndicadores;
+
+        return $this;
+    }
+
+    /**
+     * Get planEstimadoIndicadores
+     *
+     * @return \AppBundle\Entity\PlanEstimadoIndicadores
+     */
+    public function getPlanEstimadoIndicadores()
+    {
+        return $this->planEstimadoIndicadores;
+    }
+}

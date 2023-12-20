@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>{% block title %}GESCOST 1.0{% endblock %}</title>
+        {% block stylesheets %}
+            <link href="{{ asset('easyadmin/plugins/font-awesome/css/font-awesome.css') }}" rel="stylesheet"/>
+            <link href="{{ asset('easyadmin/plugins/simple-line-icons/simple-line-icons.min.css') }}" rel="stylesheet">
+            <link href="{{ asset('easyadmin/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+            <link href="{{ asset('easyadmin/plugins/uniform/css/uniform.default.css') }}" rel="stylesheet">
+            <link href="{{ asset('easyadmin/global/css/components.css') }}" rel="stylesheet">
+            <link href="{{ asset('easyadmin/global/css/plugins.css') }}" rel="stylesheet">
+            <link href="{{ asset('easyadmin/tema/layout/css/layout.css') }}" rel="stylesheet">
+            <link href="{{ asset('easyadmin/tema/layout/css/themes/darkblue.css') }}" rel="stylesheet">
+            <link href="{{ asset('easyadmin/login/login-soft.css') }}" rel="stylesheet"/>
+        {% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('images/gescost_logo.png') }}" />
+    </head>
+    <body class="login">
+    {% block body %}
+        <!-- END LOGO -->
+        <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+        <div class="menu-toggler sidebar-toggler">
+        </div>
+        <!-- END SIDEBAR TOGGLER BUTTON -->
+        <!-- BEGIN LOGIN -->
+        <div class="content" style="margin-top: 20vh">
+            <!-- BEGIN LOGIN FORM -->
+            <form  class="login-form" id="loginForm" action="{{ path('login_check') }}" method="post">
+                <!-- BEGIN LOGO -->
+                <div>
+                    <span>
+                        <img style="width: 200px;margin-left: 15%" src="{{ asset('images/gescost_logo.png')}}" alt=""/>
+                    </span>
+                </div>
+                <p id="profile-name" class="profile-name-card text-center">
+                    <strong>SISTEMA INTEGRAL PARA LA GESTIÓN DE COSTOS DE LOS CENTROS Y SERVICIOS DE ECODIC</strong>
+                </p>
+                {% if error %}
+                    <div class="alert alert-danger">
+                        <button class="close" data-close="alert"></button>
+                        <strong>Credenciales Inválidas. </strong>
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+                    <label class="control-label visible-ie8 visible-ie9">Usuario</label>
+                    <div class="input-icon">
+                        <i class="fa fa-user"></i>
+                        <input class="form-control placeholder-no-fix" type="text" value="{{ last_username }}" autocomplete="off" placeholder="Usuario"
+                               name="_username" id="username" autofocus required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label visible-ie8 visible-ie9">Contraseña</label>
+                    <div class="input-icon right">
+                        {#<i class="fa fa-lock"></i>#}
+                        <input class="form-control placeholder-no-fix" type="password" autocomplete="off"
+                               placeholder="Contraseña"  name="_password" id="password" required/>
+                        <i class="glyphicon glyphicon-eye-open" id="verClave" style="cursor: pointer;alignment: right"></i>
+                    </div>
+                </div>
+                <input type="hidden" name="_target_path" value="/inicio" />
+                <div class="form-actions" style="margin-top: 30px;margin-left: 25%">
+                    <button type="submit" class="btn blue">
+                        Aceptar <i class="m-icon-swapright m-icon-white"></i>
+                    </button>
+                </div>
+                <div class="create-account" style="margin-top: 10px">
+                    <p class="profile-name-card text-center">
+                        No tiene usuario?&nbsp; Contacte al administrador
+                    </p>
+                </div>
+            </form>
+            <!-- END LOGIN FORM -->
+        </div>
+        <!-- END LOGIN -->
+        <!-- BEGIN COPYRIGHT -->
+        <div class="copyright">
+            2020 &copy; CEDISAP.
+        </div>
+        <!-- END COPYRIGHT -->
+    {% endblock %}
+    {% block javascripts %}
+        <script src="{{ asset('easyadmin/global/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('easyadmin/global/js/jquery-migrate.min.js') }}"></script>
+        <script src="{{ asset('easyadmin/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('easyadmin/global/js/jquery.blockui.min.js') }}"></script>
+        <script src="{{ asset('easyadmin/plugins/uniform/jquery.uniform.min.js') }}"></script>
+        <script src="{{ asset('easyadmin/global/js/jquery.cokie.min.js') }}"></script>
+        <script src="{{ asset('easyadmin/plugins/jquery-validation/js/jquery.validate.min.js') }}"></script>
+        <script src="{{ asset('easyadmin/plugins/backstretch/jquery.backstretch.min.js') }}"></script>
+        <script src="{{ asset('easyadmin/global/js/metronic.js') }}"></script>
+        <script src="{{ asset('easyadmin/tema/layout/scripts/layout.js') }}"></script>
+        <script src="{{ asset('easyadmin/tema/layout/scripts/demo.js') }}"></script>
+        <script src="{{ asset('easyadmin/login/login-soft.js') }}"></script>
+        <script>
+            $(document).ready(function () {
+                /*Metronic.init(); // init metronic core components
+                Layout.init(); // init current layout
+                Login.init();
+                Demo.init();*/
+                // init background slide images
+                $.backstretch([
+                    "{{ asset('images/1.jpg')}}",
+                    "{{ asset('images/2.jpg')}}",
+                    "{{ asset('images/3.jpg')}}",
+                    "{{ asset('images/4.jpg')}}",
+                    ], {
+                        fade: 1000,
+                        duration: 8000
+                    }
+                );
+
+                $('#verClave').on("mousedown", function () {
+
+                    if ($("#password").val() !=='') {
+                        $('#password').prop("type","text");
+                    }
+                });
+
+                $('#verClave').on("mouseup", function () {
+
+                    if ($("#password").val() !=='') {
+                        $('#password').prop("type","password");
+                    }
+                });
+
+                $('#verClave').on("mouseout", function () {
+
+                    if ($("#password").val() !=='') {
+                        $('#password').prop("type","password");
+                    }
+                });
+
+            });
+        </script>
+    {% endblock %}
+    </body>
+</html>
+

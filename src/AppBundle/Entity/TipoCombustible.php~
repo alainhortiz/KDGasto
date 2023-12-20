@@ -1,0 +1,208 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * TipoCombustible
+ *
+ * @ORM\Table(name="tipo_combustible")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TipoCombustibleRepository")
+ */
+class TipoCombustible
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="codigo", type="integer", unique=true)
+     */
+    private $codigo;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nombre", type="string", length=150, unique=true)
+     */
+    private $nombre;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="precio", type="decimal", precision=18, scale=2, nullable=false)
+     */
+    private $precio = 0;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="isActive", type="boolean")
+     */
+    private $isActive = true;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Transporte", mappedBy="tipoCombustible")
+     */
+    private $transportes;
+
+    /**
+     * constructor.
+     */
+    public function __construct()
+    {
+        $this->transportes = new ArrayCollection();
+    }
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set codigo
+     *
+     * @param integer $codigo
+     *
+     * @return TipoCombustible
+     */
+    public function setCodigo($codigo)
+    {
+        $this->codigo = $codigo;
+
+        return $this;
+    }
+
+    /**
+     * Get codigo
+     *
+     * @return int
+     */
+    public function getCodigo()
+    {
+        return $this->codigo;
+    }
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     *
+     * @return TipoCombustible
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     *
+     * @return TipoCombustible
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return bool
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * Add transporte
+     *
+     * @param Transporte $transporte
+     *
+     * @return TipoCombustible
+     */
+    public function addTransporte(Transporte $transporte)
+    {
+        $this->transportes[] = $transporte;
+
+        return $this;
+    }
+
+    /**
+     * Remove transporte
+     *
+     * @param Transporte $transporte
+     */
+    public function removeTransporte(Transporte $transporte)
+    {
+        $this->transportes->removeElement($transporte);
+    }
+
+    /**
+     * Get transportes
+     *
+     * @return Collection
+     */
+    public function getTransportes()
+    {
+        return $this->transportes;
+    }
+
+
+    /**
+     * Set precio
+     *
+     * @param string $precio
+     *
+     * @return TipoCombustible
+     */
+    public function setPrecio($precio)
+    {
+        $this->precio = $precio;
+
+        return $this;
+    }
+
+    /**
+     * Get precio
+     *
+     * @return string
+     */
+    public function getPrecio()
+    {
+        return $this->precio;
+    }
+}

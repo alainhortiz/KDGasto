@@ -1,0 +1,185 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * PlanEstimadoDivisionVenta
+ *
+ * @ORM\Table(name="plan_estimado_division_venta")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PlanEstimadoDivisionVentaRepository")
+ */
+class PlanEstimadoDivisionVenta
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="aprobadoPlanVentasMensualDivision", type="boolean")
+     */
+    private $aprobadoPlanVentasMensualDivision = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="aprobadoPlanVentasMensualCentroCosto", type="boolean")
+     */
+    private $aprobadoPlanVentasMensualCentroCosto = false;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="totalVentaDivision", type="integer",nullable=true)
+     */
+    private $totalVentaDivision = 0;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="DivisionCentroCosto",inversedBy="planEstimadoDivisionesVentas")
+     */
+    protected $divisionCentroCosto;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="PlanEstimadoIndicadores",inversedBy="planEstimadoDivisionesVentas")
+     */
+    protected $planEstimadoIndicadores;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set aprobadoPlanVentasMensualDivision
+     *
+     * @param boolean $aprobadoPlanVentasMensualDivision
+     *
+     * @return PlanEstimadoDivisionVenta
+     */
+    public function setAprobadoPlanVentasMensualDivision($aprobadoPlanVentasMensualDivision)
+    {
+        $this->aprobadoPlanVentasMensualDivision = $aprobadoPlanVentasMensualDivision;
+
+        return $this;
+    }
+
+    /**
+     * Get aprobadoPlanVentasMensualDivision
+     *
+     * @return boolean
+     */
+    public function getAprobadoPlanVentasMensualDivision()
+    {
+        return $this->aprobadoPlanVentasMensualDivision;
+    }
+
+    /**
+     * Set aprobadoPlanVentasMensualCentroCosto
+     *
+     * @param boolean $aprobadoPlanVentasMensualCentroCosto
+     *
+     * @return PlanEstimadoDivisionVenta
+     */
+    public function setAprobadoPlanVentasMensualCentroCosto($aprobadoPlanVentasMensualCentroCosto)
+    {
+        $this->aprobadoPlanVentasMensualCentroCosto = $aprobadoPlanVentasMensualCentroCosto;
+
+        return $this;
+    }
+
+    /**
+     * Get aprobadoPlanVentasMensualCentroCosto
+     *
+     * @return boolean
+     */
+    public function getAprobadoPlanVentasMensualCentroCosto()
+    {
+        return $this->aprobadoPlanVentasMensualCentroCosto;
+    }
+
+    /**
+     * Set totalVentaDivision
+     *
+     * @param integer $totalVentaDivision
+     *
+     * @return PlanEstimadoDivisionVenta
+     */
+    public function setTotalVentaDivision($totalVentaDivision)
+    {
+        $this->totalVentaDivision = $totalVentaDivision;
+
+        return $this;
+    }
+
+    /**
+     * Get totalVentaDivision
+     *
+     * @return integer
+     */
+    public function getTotalVentaDivision()
+    {
+        return $this->totalVentaDivision;
+    }
+
+    /**
+     * Set divisionCentroCosto
+     *
+     * @param \AppBundle\Entity\DivisionCentroCosto $divisionCentroCosto
+     *
+     * @return PlanEstimadoDivisionVenta
+     */
+    public function setDivisionCentroCosto(\AppBundle\Entity\DivisionCentroCosto $divisionCentroCosto = null)
+    {
+        $this->divisionCentroCosto = $divisionCentroCosto;
+
+        return $this;
+    }
+
+    /**
+     * Get divisionCentroCosto
+     *
+     * @return \AppBundle\Entity\DivisionCentroCosto
+     */
+    public function getDivisionCentroCosto()
+    {
+        return $this->divisionCentroCosto;
+    }
+
+    /**
+     * Set planEstimadoIndicadores
+     *
+     * @param \AppBundle\Entity\PlanEstimadoIndicadores $planEstimadoIndicadores
+     *
+     * @return PlanEstimadoDivisionVenta
+     */
+    public function setPlanEstimadoIndicadores(\AppBundle\Entity\PlanEstimadoIndicadores $planEstimadoIndicadores = null)
+    {
+        $this->planEstimadoIndicadores = $planEstimadoIndicadores;
+
+        return $this;
+    }
+
+    /**
+     * Get planEstimadoIndicadores
+     *
+     * @return \AppBundle\Entity\PlanEstimadoIndicadores
+     */
+    public function getPlanEstimadoIndicadores()
+    {
+        return $this->planEstimadoIndicadores;
+    }
+}

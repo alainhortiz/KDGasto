@@ -1,0 +1,218 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
+
+/**
+ * PlanEstimadoLubricante
+ *
+ * @ORM\Table(name="plan_estimado_lubricante",uniqueConstraints={@UniqueConstraint(name="IDX__UNIQUETUPLA23", columns={"lubricante_id", "plan_estimado_indicadores_id"})})
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PlanEstimadoLubricanteRepository")
+ */
+class PlanEstimadoLubricante
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="lts", type="integer",nullable=false)
+     */
+    private $lts = 0;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="precio", type="decimal", precision=18, scale=2, nullable=false)
+     */
+    private $precio = 0;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="importe", type="decimal", precision=18, scale=2, nullable=false)
+     */
+    private $importe = 0;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="aprobadoEstimadoLubricante", type="boolean")
+     */
+    private $aprobadoEstimadoLubricante = false;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Lubricante",inversedBy="planEstimadoLubricantes")
+     */
+    protected $lubricante;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="PlanEstimadoIndicadores",inversedBy="planEstimadoLubricantes")
+     */
+    protected $planEstimadoIndicadores;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set lts
+     *
+     * @param integer $lts
+     *
+     * @return PlanEstimadoLubricante
+     */
+    public function setLts($lts)
+    {
+        $this->lts = $lts;
+
+        return $this;
+    }
+
+    /**
+     * Get lts
+     *
+     * @return integer
+     */
+    public function getLts()
+    {
+        return $this->lts;
+    }
+
+    /**
+     * Set precio
+     *
+     * @param string $precio
+     *
+     * @return PlanEstimadoLubricante
+     */
+    public function setPrecio($precio)
+    {
+        $this->precio = $precio;
+
+        return $this;
+    }
+
+    /**
+     * Get precio
+     *
+     * @return string
+     */
+    public function getPrecio()
+    {
+        return $this->precio;
+    }
+
+    /**
+     * Set importe
+     *
+     * @param string $importe
+     *
+     * @return PlanEstimadoLubricante
+     */
+    public function setImporte($importe)
+    {
+        $this->importe = $importe;
+
+        return $this;
+    }
+
+    /**
+     * Get importe
+     *
+     * @return string
+     */
+    public function getImporte()
+    {
+        return $this->importe;
+    }
+
+    /**
+     * Set lubricante
+     *
+     * @param \AppBundle\Entity\Lubricante $lubricante
+     *
+     * @return PlanEstimadoLubricante
+     */
+    public function setLubricante(\AppBundle\Entity\Lubricante $lubricante = null)
+    {
+        $this->lubricante = $lubricante;
+
+        return $this;
+    }
+
+    /**
+     * Get lubricante
+     *
+     * @return \AppBundle\Entity\Lubricante
+     */
+    public function getLubricante()
+    {
+        return $this->lubricante;
+    }
+
+    /**
+     * Set planEstimadoIndicadores
+     *
+     * @param \AppBundle\Entity\PlanEstimadoIndicadores $planEstimadoIndicadores
+     *
+     * @return PlanEstimadoLubricante
+     */
+    public function setPlanEstimadoIndicadores(\AppBundle\Entity\PlanEstimadoIndicadores $planEstimadoIndicadores = null)
+    {
+        $this->planEstimadoIndicadores = $planEstimadoIndicadores;
+
+        return $this;
+    }
+
+    /**
+     * Get planEstimadoIndicadores
+     *
+     * @return \AppBundle\Entity\PlanEstimadoIndicadores
+     */
+    public function getPlanEstimadoIndicadores()
+    {
+        return $this->planEstimadoIndicadores;
+    }
+
+
+    /**
+     * Set aprobadoEstimadoLubricante
+     *
+     * @param boolean $aprobadoEstimadoLubricante
+     *
+     * @return PlanEstimadoLubricante
+     */
+    public function setAprobadoEstimadoLubricante($aprobadoEstimadoLubricante)
+    {
+        $this->aprobadoEstimadoLubricante = $aprobadoEstimadoLubricante;
+
+        return $this;
+    }
+
+    /**
+     * Get aprobadoEstimadoLubricante
+     *
+     * @return boolean
+     */
+    public function getAprobadoEstimadoLubricante()
+    {
+        return $this->aprobadoEstimadoLubricante;
+    }
+}

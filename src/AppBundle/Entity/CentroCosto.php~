@@ -1,0 +1,316 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * CentroCosto
+ *
+ * @ORM\Table(name="centro_costo")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CentroCostoRepository")
+ */
+class CentroCosto
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="codigo", type="integer", unique=true)
+     */
+    private $codigo;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nombre", type="string", length=150)
+     */
+    private $nombre;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="isActive", type="boolean")
+     */
+    private $isActive = true;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Provincia",inversedBy="centrosCostos")
+     */
+    protected $provincia;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="DivisionCentroCosto",inversedBy="centrosCostos")
+     */
+    protected $divisionCentroCosto;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Transporte", mappedBy="centroCosto")
+     */
+    private $transportes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Usuario", mappedBy="centroCosto")
+     */
+    private $usuarios;
+
+    /**
+     * @ORM\OneToMany(targetEntity="PlantillaCargo", mappedBy="centroCosto")
+     */
+    private $denominadorCargo;
+
+    /**
+     * constructor.
+     */
+    public function __construct()
+    {
+        $this->transportes = new ArrayCollection();
+        $this->usuarios = new ArrayCollection();
+        $this->denominadorCargo = new ArrayCollection();
+    }
+
+
+
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set codigo
+     *
+     * @param integer $codigo
+     *
+     * @return CentroCosto
+     */
+    public function setCodigo($codigo)
+    {
+        $this->codigo = $codigo;
+
+        return $this;
+    }
+
+    /**
+     * Get codigo
+     *
+     * @return integer
+     */
+    public function getCodigo()
+    {
+        return $this->codigo;
+    }
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     *
+     * @return CentroCosto
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     *
+     * @return CentroCosto
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * Set provincia
+     *
+     * @param \AppBundle\Entity\Provincia $provincia
+     *
+     * @return CentroCosto
+     */
+    public function setProvincia(\AppBundle\Entity\Provincia $provincia = null)
+    {
+        $this->provincia = $provincia;
+
+        return $this;
+    }
+
+    /**
+     * Get provincia
+     *
+     * @return \AppBundle\Entity\Provincia
+     */
+    public function getProvincia()
+    {
+        return $this->provincia;
+    }
+
+    /**
+     * Set divisionCentroCosto
+     *
+     * @param \AppBundle\Entity\DivisionCentroCosto $divisionCentroCosto
+     *
+     * @return CentroCosto
+     */
+    public function setDivisionCentroCosto(\AppBundle\Entity\DivisionCentroCosto $divisionCentroCosto = null)
+    {
+        $this->divisionCentroCosto = $divisionCentroCosto;
+
+        return $this;
+    }
+
+    /**
+     * Get divisionCentroCosto
+     *
+     * @return \AppBundle\Entity\DivisionCentroCosto
+     */
+    public function getDivisionCentroCosto()
+    {
+        return $this->divisionCentroCosto;
+    }
+
+    /**
+     * Add transporte
+     *
+     * @param \AppBundle\Entity\Transporte $transporte
+     *
+     * @return CentroCosto
+     */
+    public function addTransporte(\AppBundle\Entity\Transporte $transporte)
+    {
+        $this->transportes[] = $transporte;
+
+        return $this;
+    }
+
+    /**
+     * Remove transporte
+     *
+     * @param \AppBundle\Entity\Transporte $transporte
+     */
+    public function removeTransporte(\AppBundle\Entity\Transporte $transporte)
+    {
+        $this->transportes->removeElement($transporte);
+    }
+
+    /**
+     * Get transportes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTransportes()
+    {
+        return $this->transportes;
+    }
+
+    /**
+     * Add usuario
+     *
+     * @param \AppBundle\Entity\Usuario $usuario
+     *
+     * @return CentroCosto
+     */
+    public function addUsuario(\AppBundle\Entity\Usuario $usuario)
+    {
+        $this->usuarios[] = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * Remove usuario
+     *
+     * @param \AppBundle\Entity\Usuario $usuario
+     */
+    public function removeUsuario(\AppBundle\Entity\Usuario $usuario)
+    {
+        $this->usuarios->removeElement($usuario);
+    }
+
+    /**
+     * Get usuarios
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUsuarios()
+    {
+        return $this->usuarios;
+    }
+
+    /**
+     * Add denominadorCargo
+     *
+     * @param \AppBundle\Entity\PlantillaCargo $denominadorCargo
+     *
+     * @return CentroCosto
+     */
+    public function addDenominadorCargo(\AppBundle\Entity\PlantillaCargo $denominadorCargo)
+    {
+        $this->denominadorCargo[] = $denominadorCargo;
+
+        return $this;
+    }
+
+    /**
+     * Remove denominadorCargo
+     *
+     * @param \AppBundle\Entity\PlantillaCargo $denominadorCargo
+     */
+    public function removeDenominadorCargo(\AppBundle\Entity\PlantillaCargo $denominadorCargo)
+    {
+        $this->denominadorCargo->removeElement($denominadorCargo);
+    }
+
+    /**
+     * Get denominadorCargo
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDenominadorCargo()
+    {
+        return $this->denominadorCargo;
+    }
+}

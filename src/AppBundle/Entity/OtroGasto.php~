@@ -1,0 +1,245 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * OtroGasto
+ *
+ * @ORM\Table(name="otro_gasto")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\OtroGastoRepository")
+ */
+class OtroGasto
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="codigo", type="integer", unique=true)
+     */
+    private $codigo;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nombre", type="string", length=150)
+     */
+    private $nombre;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="isActive", type="boolean")
+     */
+    private $isActive = true;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="isServicio", type="boolean")
+     */
+    private $isServicio = false;
+
+    /**
+     * @ORM\OneToMany(targetEntity="PlanEstimadoOtrosGastos", mappedBy="otroGasto")
+     */
+    private $planEstimadosOtrosGastos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="PlanEstimadoMesOtrosGastos", mappedBy="otroGasto")
+     */
+    private $planEstimadosMesOtrosGastos;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->planEstimadosOtrosGastos = new ArrayCollection();
+        $this->planEstimadosMesOtrosGastos = new ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set codigo
+     *
+     * @param integer $codigo
+     *
+     * @return OtroGasto
+     */
+    public function setCodigo($codigo)
+    {
+        $this->codigo = $codigo;
+
+        return $this;
+    }
+
+    /**
+     * Get codigo
+     *
+     * @return int
+     */
+    public function getCodigo()
+    {
+        return $this->codigo;
+    }
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     *
+     * @return OtroGasto
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     *
+     * @return OtroGasto
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return bool
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * Add planEstimadosOtrosGasto
+     *
+     * @param \AppBundle\Entity\PlanEstimadoOtrosGastos $planEstimadosOtrosGasto
+     *
+     * @return OtroGasto
+     */
+    public function addPlanEstimadosOtrosGasto(\AppBundle\Entity\PlanEstimadoOtrosGastos $planEstimadosOtrosGasto)
+    {
+        $this->planEstimadosOtrosGastos[] = $planEstimadosOtrosGasto;
+
+        return $this;
+    }
+
+    /**
+     * Remove planEstimadosOtrosGasto
+     *
+     * @param \AppBundle\Entity\PlanEstimadoOtrosGastos $planEstimadosOtrosGasto
+     */
+    public function removePlanEstimadosOtrosGasto(\AppBundle\Entity\PlanEstimadoOtrosGastos $planEstimadosOtrosGasto)
+    {
+        $this->planEstimadosOtrosGastos->removeElement($planEstimadosOtrosGasto);
+    }
+
+    /**
+     * Get planEstimadosOtrosGastos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPlanEstimadosOtrosGastos()
+    {
+        return $this->planEstimadosOtrosGastos;
+    }
+
+    /**
+     * Add planEstimadosMesOtrosGasto
+     *
+     * @param \AppBundle\Entity\PlanEstimadoMesOtrosGastos $planEstimadosMesOtrosGasto
+     *
+     * @return OtroGasto
+     */
+    public function addPlanEstimadosMesOtrosGasto(\AppBundle\Entity\PlanEstimadoMesOtrosGastos $planEstimadosMesOtrosGasto)
+    {
+        $this->planEstimadosMesOtrosGastos[] = $planEstimadosMesOtrosGasto;
+
+        return $this;
+    }
+
+    /**
+     * Remove planEstimadosMesOtrosGasto
+     *
+     * @param \AppBundle\Entity\PlanEstimadoMesOtrosGastos $planEstimadosMesOtrosGasto
+     */
+    public function removePlanEstimadosMesOtrosGasto(\AppBundle\Entity\PlanEstimadoMesOtrosGastos $planEstimadosMesOtrosGasto)
+    {
+        $this->planEstimadosMesOtrosGastos->removeElement($planEstimadosMesOtrosGasto);
+    }
+
+    /**
+     * Get planEstimadosMesOtrosGastos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPlanEstimadosMesOtrosGastos()
+    {
+        return $this->planEstimadosMesOtrosGastos;
+    }
+
+    /**
+     * Set isServicio
+     *
+     * @param boolean $isServicio
+     *
+     * @return OtroGasto
+     */
+    public function setIsServicio($isServicio)
+    {
+        $this->isServicio = $isServicio;
+
+        return $this;
+    }
+
+    /**
+     * Get isServicio
+     *
+     * @return boolean
+     */
+    public function getIsServicio()
+    {
+        return $this->isServicio;
+    }
+}
